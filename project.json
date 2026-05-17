@@ -1,0 +1,6 @@
+{
+  "project_rules": {
+    "lint": "echo 'No lint command configured'",
+    "typecheck": "echo 'No typecheck command configured'"
+  }
+}

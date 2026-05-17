@@ -1,0 +1,68 @@
+<view class="container">
+  <view class="recharge-header">
+    <view class="current-balance">
+      <text class="label">当前余额</text>
+      <text class="amount">¥{{currentBalance}}</text>
+    </view>
+    <view class="member-info">
+      <view class="member-badge" style="background: linear-gradient(135deg, {{memberLevelInfo.color}} 0%, {{memberLevelInfo.color}}99 100%)">
+        <text>{{memberLevelInfo.name}}</text>
+      </view>
+      <text class="discount">享{{memberLevelInfo.discount * 10}}折优惠</text>
+    </view>
+  </view>
+
+  <view class="packages-section">
+    <view class="section-title">充值套餐</view>
+    <view class="packages-grid">
+      <view class="package-item {{selectedPackage === index ? 'active' : ''}}"
+            wx:for="{{packages}}"
+            wx:key="index"
+            bindtap="selectPackage"
+            data-index="{{index}}">
+        <text class="amount">¥{{item.amount}}</text>
+        <text class="give" wx:if="{{item.giveAmount > 0}}">送¥{{item.giveAmount}}</text>
+        <view class="select-icon" wx:if="{{selectedPackage === index}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="custom-section">
+    <view class="section-title">自定义充值</view>
+    <view class="custom-input">
+      <text class="currency">¥</text>
+      <input type="number" placeholder="请输入充值金额" bindinput="inputAmount" />
+    </view>
+  </view>
+
+  <view class="benefit-section">
+    <view class="section-title">会员权益</view>
+    <view class="benefit-list">
+      <view class="benefit-item">
+        <text class="benefit-icon">🎁</text>
+        <text class="benefit-name">专属折扣</text>
+        <text class="benefit-desc">消费享{{memberLevelInfo.discount * 10}}折</text>
+      </view>
+      <view class="benefit-item">
+        <text class="benefit-icon">💰</text>
+        <text class="benefit-name">充值优惠</text>
+        <text class="benefit-desc">充值即送余额</text>
+      </view>
+      <view class="benefit-item">
+        <text class="benefit-icon">⭐</text>
+        <text class="benefit-name">积分兑换</text>
+        <text class="benefit-desc">积分可兑换商品</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="recharge-footer">
+    <view class="total-amount">
+      <text>充值金额: </text>
+      <text class="amount">¥{{rechargeAmount}}</text>
+    </view>
+    <view class="recharge-btn {{rechargeAmount > 0 ? '' : 'disabled'}}" bindtap="submitRecharge">
+      立即充值
+    </view>
+  </view>
+</view>

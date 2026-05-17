@@ -1,0 +1,326 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.header {
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  padding: 40rpx 30rpx;
+  color: white;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+  padding: 20rpx;
+  margin-top: -40rpx;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.05);
+}
+
+.stat-icon {
+  font-size: 50rpx;
+  margin-right: 20rpx;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  display: block;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-label {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.section {
+  background: white;
+  margin: 20rpx;
+  border-radius: 12rpx;
+  padding: 30rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 15rpx;
+}
+
+.filter-tab {
+  padding: 8rpx 20rpx;
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.filter-tab.active {
+  background: #1890ff;
+  color: white;
+}
+
+.hot-goods {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.goods-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+}
+
+.goods-rank {
+  width: 50rpx;
+  height: 50rpx;
+  background: #d9d9d9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: white;
+  margin-right: 20rpx;
+}
+
+.goods-rank.top {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+}
+
+.goods-info {
+  flex: 1;
+}
+
+.goods-name {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.goods-sales {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.goods-revenue {
+  font-size: 28rpx;
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.order-item {
+  padding: 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.order-status {
+  font-size: 24rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+}
+
+.order-status.pending {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.order-status.paid {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.order-status.delivering {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.order-status.completed {
+  background: #f5f5f5;
+  color: #8c8c8c;
+}
+
+.order-info {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.order-index {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #1890ff;
+  background: #e6f7ff;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.order-no {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.order-customer {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 15rpx;
+  padding: 10rpx 0;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+.customer-name {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.customer-phone {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.order-goods {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  margin-bottom: 15rpx;
+}
+
+.order-goods .goods-item {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+  padding: 10rpx 0;
+  background: transparent;
+}
+
+.goods-emoji {
+  font-size: 36rpx;
+}
+
+.goods-name {
+  flex: 1;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.goods-quantity {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.goods-price {
+  font-size: 26rpx;
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.order-delivery {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+  padding: 10rpx;
+  background: #fafafa;
+  border-radius: 8rpx;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.order-total {
+  font-size: 28rpx;
+  color: #ff4d4f;
+  font-weight: bold;
+}
+
+.finance-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.finance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+}
+
+.finance-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.finance-value {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.finance-value.income {
+  color: #52c41a;
+}

@@ -1,0 +1,74 @@
+<view class="container">
+  <view class="header">
+    <text class="title">管理员管理</text>
+  </view>
+
+  <view class="section">
+    <view class="section-title">搜索用户</view>
+    <view class="search-bar">
+      <input class="search-input" placeholder="输入用户手机号搜索" value="{{searchKeyword}}" bindinput="onSearchInput" />
+      <button class="btn-search" bindtap="searchUsers">搜索</button>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{searchResults.length > 0}}">
+    <view class="section-title">搜索结果</view>
+    <view class="user-list">
+      <view class="user-item" wx:for="{{searchResults}}" wx:key="_id">
+        <view class="user-info">
+          <text class="user-name">{{item.nickname || '未命名用户'}}</text>
+          <text class="user-id">手机号: {{item.phone}}</text>
+        </view>
+        <button class="btn-add-user" bindtap="selectUser" data-id="{{item._id}}" data-phone="{{item.phone}}" data-name="{{item.nickname}}">添加</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">添加新管理员</view>
+    <view class="form-item">
+      <text class="label">用户手机号</text>
+      <input class="input" placeholder="请从上方搜索选择用户" value="{{selectedUserPhone}}" bindinput="onAdminIdInput" disabled="{{true}}" />
+      <text class="selected-name" wx:if="{{selectedUserName}}">已选择：{{selectedUserName}}</text>
+    </view>
+    <view class="form-item">
+      <text class="label">角色</text>
+      <picker mode="selector" range="{{roles}}" range-key="label" value="{{roleIndex}}" bindchange="onRoleChange">
+        <view class="picker">
+          {{roles[roleIndex].label}} <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <button class="btn-add" bindtap="addAdmin" loading="{{adding}}" disabled="{{!selectedUserPhone}}">添加管理员</button>
+  </view>
+
+  <view class="section">
+    <view class="section-title">现有管理员</view>
+    <view class="admin-list" wx:if="{{managers.length > 0}}">
+      <view class="admin-item" wx:for="{{managers}}" wx:key="_id">
+        <view class="admin-info">
+          <text class="admin-name">{{item.nickname || item.phone}}</text>
+          <text class="admin-role {{item.role}}">{{item.role === 'super_admin' ? '超级管理员' : '普通管理员'}}</text>
+        </view>
+        <view class="admin-actions">
+          <text class="admin-status {{item.status === 'active' ? 'active' : 'disabled'}}">{{item.status === 'active' ? '正常' : '已禁用'}}</text>
+          <button class="btn-toggle" wx:if="{{item.role !== 'super_admin'}}" bindtap="toggleAdmin" data-id="{{item._id}}" data-status="{{item.status}}">
+            {{item.status === 'active' ? '禁用' : '启用'}}
+          </button>
+          <button class="btn-delete" wx:if="{{item.role !== 'super_admin'}}" bindtap="deleteAdmin" data-id="{{item._id}}" data-name="{{item.nickname || item.phone}}">
+            删除
+          </button>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:else>
+      <text>暂无管理员</text>
+    </view>
+  </view>
+
+  <view class="tips">
+    <text class="tips-title">提示：</text>
+    <text class="tips-content">1. 使用上方搜索框搜索用户手机号，选择用户后添加为管理员</text>
+    <text class="tips-content">2. 超级管理员拥有所有权限，普通管理员只能管理商品和订单</text>
+  </view>
+</view>

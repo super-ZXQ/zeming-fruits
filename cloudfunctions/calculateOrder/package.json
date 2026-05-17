@@ -1,0 +1,10 @@
+{
+  "name": "calculateOrder",
+  "version": "1.0.0",
+  "description": "计算订单价格和匹配优惠券",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "author": ""
+}

@@ -1,0 +1,104 @@
+<view class="container">
+  <view class="detail-header">
+    <text class="status-text">{{statusText[order.status]}}</text>
+    <text class="status-desc">{{statusDesc[order.status]}}</text>
+  </view>
+
+  <view class="address-card" wx:if="{{order.deliveryType === 'delivery'}}">
+    <text class="address-icon">📍</text>
+    <view class="address-info">
+      <view class="name-phone">
+        <text class="name">{{order.address.name}}</text>
+        <text class="phone">{{order.address.phone}}</text>
+      </view>
+      <text class="address-detail">{{order.address.province}}{{order.address.city}}{{order.address.district}}{{order.address.detail}}</text>
+    </view>
+  </view>
+
+  <view class="logistics-card" wx:if="{{order.status === 'paid' || order.status === 'completed'}}">
+    <view class="logistics-header">
+      <text class="logistics-icon">🚚</text>
+      <text class="logistics-title">物流信息</text>
+    </view>
+    <view class="logistics-content">
+      <view class="logistics-item" wx:for="{{logisticsInfo}}" wx:key="index">
+        <view class="logistics-dot {{index === 0 ? 'active' : ''}}"></view>
+        <view class="logistics-text">
+          <text class="logistics-desc">{{item.desc}}</text>
+          <text class="logistics-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="order-info">
+    <view class="info-title">📋 订单信息</view>
+    <view class="info-item">
+      <text class="label">订单编号</text>
+      <text class="value">{{order.id}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">下单时间</text>
+      <text class="value">{{order.createTime}}</text>
+    </view>
+    <view class="info-item" wx:if="{{order.payTime}}">
+      <text class="label">支付时间</text>
+      <text class="value">{{order.payTime}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">配送方式</text>
+      <text class="value">{{order.deliveryType === 'delivery' ? '配送上门' : '到店自提'}}</text>
+    </view>
+    <view class="info-item" wx:if="{{order.remark}}">
+      <text class="label">备注</text>
+      <text class="value">{{order.remark}}</text>
+    </view>
+  </view>
+
+  <view class="items-card">
+    <view class="items-title">🍎 商品清单</view>
+    <view class="item" wx:for="{{order.items}}" wx:key="id">
+      <view class="item-emoji">
+        <text>{{item.emoji || '🍎'}}</text>
+      </view>
+      <view class="item-info">
+        <text class="item-name">{{item.name}}</text>
+        <view class="item-desc" wx:if="{{item.description}}">{{item.description}}</view>
+        <view class="item-bottom">
+          <text class="price">¥{{item.price}}</text>
+          <text class="quantity">x{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="summary-card">
+    <view class="summary-item">
+      <text>商品金额</text>
+      <text>¥{{order.totalAmount}}</text>
+    </view>
+    <view class="summary-item" wx:if="{{order.deliveryFee > 0}}">
+      <text>配送费</text>
+      <text>¥{{order.deliveryFee}}</text>
+    </view>
+    <view class="summary-item total">
+      <text>实付金额</text>
+      <text class="price">¥{{order.finalAmount}}</text>
+    </view>
+  </view>
+
+  <view class="detail-footer">
+    <view class="action-btn" wx:if="{{order.status === 'pending'}}" bindtap="payOrder">
+      去支付
+    </view>
+    <view class="action-btn" wx:if="{{order.status === 'paid'}}" bindtap="viewLogistics">
+      查看物流
+    </view>
+    <view class="action-btn" wx:if="{{order.status === 'paid'}}" bindtap="confirmReceive">
+      确认收货
+    </view>
+    <view class="action-btn" wx:if="{{order.status === 'completed'}}" bindtap="applyRefund">
+      申请售后
+    </view>
+  </view>
+</view>

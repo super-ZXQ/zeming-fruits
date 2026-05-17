@@ -1,0 +1,165 @@
+<view class="container">
+  <view class="admin-nav">
+    <view class="nav-item" bindtap="goToDashboard">
+      <text class="nav-icon">📊</text>
+      <text class="nav-text">数据看板</text>
+    </view>
+    <view class="nav-item" bindtap="goToManagers">
+      <text class="nav-icon">👥</text>
+      <text class="nav-text">管理员</text>
+    </view>
+    <view class="nav-item" bindtap="goToCoupons">
+      <text class="nav-icon">🎫</text>
+      <text class="nav-text">优惠券</text>
+    </view>
+    <view class="nav-item" bindtap="goToBatchImport">
+      <text class="nav-icon">📥</text>
+      <text class="nav-text">批量导入</text>
+    </view>
+    <view class="nav-item" bindtap="goToSettings">
+      <text class="nav-icon">⚙️</text>
+      <text class="nav-text">店铺设置</text>
+    </view>
+  </view>
+
+  <view class="header">
+    <text class="header-title">商品管理</text>
+    <text class="header-count">共{{products.length}}件商品</text>
+  </view>
+
+  <view class="product-list" wx:if="{{products.length > 0}}">
+    <view class="product-item" wx:for="{{products}}" wx:key="_id" bindtap="editProduct" data-id="{{item._id}}">
+      <view class="product-image">
+        <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" class="product-img" binderror="onImageError" data-index="{{index}}"></image>
+        <view wx:if="{{!item.imageUrl}}" class="product-placeholder">
+          <text class="placeholder-text">🍎</text>
+        </view>
+      </view>
+      <view class="product-info">
+        <text class="product-name">{{item.name}}</text>
+        <view class="product-price-row">
+          <text class="product-price">¥{{item.price}}</text>
+          <text class="product-unit">/{{item.unit || '份'}}</text>
+          <text class="product-original" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+        </view>
+      </view>
+      <view class="edit-icon">
+        <text>✏️</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{products.length === 0 && !loading}}">
+    <text class="empty-icon">📦</text>
+    <text class="empty-text">暂无商品</text>
+    <text class="empty-tip">点击右下角按钮添加商品</text>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-icon">⏳</text>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view class="add-btn" bindtap="addProduct">
+    <text>+</text>
+  </view>
+</view>
+
+<view class="modal-mask" wx:if="{{showModal}}" bindtap="closeModal"></view>
+
+<view class="modal-content" wx:if="{{showModal}}">
+  <view class="modal-header">
+    <text class="modal-title">{{isEdit ? '编辑商品' : '添加商品'}}</text>
+    <view class="modal-close" bindtap="closeModal">
+      <text>✕</text>
+    </view>
+  </view>
+
+  <view class="modal-body">
+    <view class="form-item">
+      <text class="form-label">商品图片</text>
+      <view class="image-upload" bindtap="chooseImage">
+        <image wx:if="{{editForm.imageUrl}}" src="{{editForm.imageUrl}}" mode="aspectFill" class="upload-img"></image>
+        <view wx:else class="upload-placeholder">
+          <text class="plus-icon">+</text>
+          <text class="upload-tip">点击上传图片</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">商品名称</text>
+      <input class="form-input" placeholder="请输入商品名称" value="{{editForm.name}}" bindinput="onInputName" />
+    </view>
+
+    <view class="form-row">
+      <view class="form-item half">
+        <text class="form-label">现价</text>
+        <input class="form-input" type="digit" placeholder="0.00" value="{{editForm.price}}" bindinput="onInputPrice" />
+      </view>
+      <view class="form-item half">
+        <text class="form-label">原价</text>
+        <input class="form-input" type="digit" placeholder="0.00" value="{{editForm.originalPrice}}" bindinput="onInputOriginalPrice" />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">单位</text>
+      <view class="unit-selector">
+        <view class="unit-option {{editForm.unit === '份' ? 'active' : ''}}" bindtap="selectUnit" data-unit="份">份</view>
+        <view class="unit-option {{editForm.unit === '斤' ? 'active' : ''}}" bindtap="selectUnit" data-unit="斤">斤</view>
+        <view class="unit-option {{editForm.unit === 'kg' ? 'active' : ''}}" bindtap="selectUnit" data-unit="kg">kg</view>
+        <view class="unit-option {{editForm.unit === '个' ? 'active' : ''}}" bindtap="selectUnit" data-unit="个">个</view>
+        <view class="unit-option {{editForm.unit === '盒' ? 'active' : ''}}" bindtap="selectUnit" data-unit="盒">盒</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">促销标签</text>
+      <input class="form-input" placeholder="如：热销、新品、特价" value="{{editForm.tag}}" bindinput="onInputTag" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">秒杀设置</text>
+      <view class="seckill-settings">
+        <view class="seckill-toggle" bindtap="toggleSeckill">
+          <view class="toggle-checkbox {{editForm.isSeckill ? 'checked' : ''}}">
+            <text wx:if="{{editForm.isSeckill}}">✓</text>
+          </view>
+          <text>设为秒杀商品</text>
+        </view>
+        <view class="seckill-fields" wx:if="{{editForm.isSeckill}}">
+          <view class="seckill-field">
+            <text class="field-label">秒杀价</text>
+            <input class="field-input" type="digit" placeholder="秒杀价格" value="{{editForm.seckillPrice}}" bindinput="onInputSeckillPrice" />
+          </view>
+          <view class="seckill-field">
+            <text class="field-label">库存</text>
+            <input class="field-input" type="number" placeholder="秒杀库存" value="{{editForm.seckillStock}}" bindinput="onInputSeckillStock" />
+          </view>
+          <view class="seckill-field">
+            <text class="field-label">限购</text>
+            <input class="field-input" type="number" placeholder="每人限购" value="{{editForm.seckillLimit}}" bindinput="onInputSeckillLimit" />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">月销量</text>
+      <input class="form-input" type="number" placeholder="0" value="{{editForm.sales}}" bindinput="onInputSales" />
+    </view>
+  </view>
+
+  <view class="modal-footer">
+    <view class="btn-delete" wx:if="{{isEdit}}" bindtap="deleteProduct">
+      <text>删除</text>
+    </view>
+    <view class="btn-cancel" bindtap="closeModal">
+      <text>取消</text>
+    </view>
+    <view class="btn-save" bindtap="saveProduct">
+      <text>保存</text>
+    </view>
+  </view>
+</view>

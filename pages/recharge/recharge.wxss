@@ -1,0 +1,195 @@
+.container {
+  padding-bottom: 140rpx;
+}
+
+.recharge-header {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 50%, #E65100 100%);
+  padding: 40rpx 30rpx;
+}
+
+.current-balance {
+  text-align: center;
+}
+
+.current-balance .label {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  display: block;
+}
+
+.current-balance .amount {
+  font-size: 60rpx;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-top: 10rpx;
+}
+
+.member-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30rpx;
+}
+
+.member-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 22rpx;
+  color: #fff;
+  margin-right: 16rpx;
+}
+
+.discount {
+  font-size: 24rpx;
+  color: #fff;
+}
+
+.packages-section, .custom-section, .benefit-section {
+  background-color: #fff;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 24rpx;
+}
+
+.packages-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.package-item {
+  width: calc(50% - 10rpx);
+  background-color: #f8fcf8;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  text-align: center;
+  position: relative;
+  border: 2rpx solid transparent;
+}
+
+.package-item.active {
+  border-color: #FF9800;
+  background-color: #fff8e1;
+}
+
+.package-item .amount {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  display: block;
+}
+
+.package-item .give {
+  font-size: 24rpx;
+  color: #e53935;
+  display: block;
+  margin-top: 10rpx;
+}
+
+.select-icon {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background-color: #FF9800;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-input {
+  display: flex;
+  align-items: center;
+  border-bottom: 2rpx solid #eee;
+  padding: 18rpx 0;
+}
+
+.currency {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-right: 16rpx;
+}
+
+.custom-input input {
+  flex: 1;
+  font-size: 32rpx;
+}
+
+.benefit-list {
+  display: flex;
+  justify-content: space-between;
+}
+
+.benefit-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.benefit-icon {
+  font-size: 52rpx;
+  margin-bottom: 12rpx;
+}
+
+.benefit-name {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.benefit-desc {
+  font-size: 20rpx;
+  color: #9e9e9e;
+  margin-top: 8rpx;
+  text-align: center;
+}
+
+.recharge-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140rpx;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
+}
+
+.total-amount {
+  flex: 1;
+  font-size: 26rpx;
+}
+
+.total-amount .amount {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #e53935;
+}
+
+.recharge-btn {
+  padding: 26rpx 80rpx;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: #fff;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+}
+
+.recharge-btn.disabled {
+  background: #bdbdbd;
+}

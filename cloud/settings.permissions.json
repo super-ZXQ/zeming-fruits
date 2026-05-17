@@ -1,0 +1,13 @@
+{
+  "env": [
+    {
+      "type": "ALL",
+      "value": {
+        "read": true,
+        "write": true
+      }
+    }
+  ],
+  "read": "auth.openid == 'od_cz3QbJT7rhill3ACZM45K4pY' || auth.openid == 'od_cz3QbJT7rJnill3ACZM45K4pY'",
+  "write": "auth.openid == 'od_cz3QbJT7rhill3ACZM45K4pY' || auth.openid == 'od_cz3QbJT7rJnill3ACZM45K4pY'"
+}

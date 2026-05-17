@@ -1,0 +1,6 @@
+{
+  "wechatPay": {
+    "merchantId": "在此填入你的商户号",
+    "adminOpenid": "在此填入管理员openid"
+  }
+}

@@ -1,0 +1,76 @@
+<view class="container">
+  <view class="header">
+    <text class="title">优惠券管理</text>
+    <view class="add-btn" bindtap="goToCreate">
+      <text>+ 新建</text>
+    </view>
+  </view>
+
+  <view class="tabs">
+    <view class="tab {{currentTab === 'all' ? 'active' : ''}}" bindtap="switchTab" data-tab="all">
+      <text>全部</text>
+    </view>
+    <view class="tab {{currentTab === 'active' ? 'active' : ''}}" bindtap="switchTab" data-tab="active">
+      <text>进行中</text>
+    </view>
+    <view class="tab {{currentTab === 'expired' ? 'active' : ''}}" bindtap="switchTab" data-tab="expired">
+      <text>已过期</text>
+    </view>
+  </view>
+
+  <view class="stats">
+    <view class="stat-item">
+      <text class="stat-value">{{stats.total}}</text>
+      <text class="stat-label">总数量</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.active}}</text>
+      <text class="stat-label">进行中</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.used}}</text>
+      <text class="stat-label">已使用</text>
+    </view>
+  </view>
+
+  <view class="coupon-list">
+    <view class="coupon-item" wx:for="{{coupons}}" wx:key="_id">
+      <view class="coupon-card {{item.status === 'expired' ? 'expired' : ''}}">
+        <view class="coupon-left">
+          <text class="coupon-value">
+            <text wx:if="{{item.discountType === 'cash'}}">¥{{item.value}}</text>
+            <text wx:else>{{item.discount}}折</text>
+          </text>
+          <text class="coupon-threshold">满{{item.threshold}}可用</text>
+        </view>
+        <view class="coupon-right">
+          <view class="coupon-header">
+            <text class="coupon-name">{{item.name}}</text>
+            <text class="coupon-type {{item.type}}">{{item.type === 'discount' ? '通用' : item.type === 'activity' ? '活动' : '隐藏'}}</text>
+          </view>
+          <view class="coupon-info">
+            <text class="coupon-stock">库存: {{item.stock - item.usedCount}}/{{item.stock}}</text>
+            <text class="coupon-valid">{{item.validFrom}} 至 {{item.validTo}}</text>
+          </view>
+          <view class="coupon-actions">
+            <view class="action-btn" bindtap="editCoupon" data-id="{{item._id}}">
+              <text>编辑</text>
+            </view>
+            <view class="action-btn" bindtap="toggleStatus" data-id="{{item._id}}" data-status="{{item.status}}">
+              <text>{{item.status === 'active' ? '禁用' : '启用'}}</text>
+            </view>
+            <view class="action-btn danger" bindtap="deleteCoupon" data-id="{{item._id}}">
+              <text>删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty" wx:if="{{coupons.length === 0}}">
+      <text class="empty-icon">🎫</text>
+      <text class="empty-text">暂无优惠券</text>
+      <view class="empty-btn" bindtap="goToCreate">立即创建</view>
+    </view>
+  </view>
+</view>

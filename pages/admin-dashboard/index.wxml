@@ -1,0 +1,117 @@
+<view class="container">
+  <view class="header">
+    <text class="title">数据看板</text>
+    <text class="date">{{today}}</text>
+  </view>
+
+  <view class="stats-grid">
+    <view class="stat-card">
+      <text class="stat-icon">💰</text>
+      <view class="stat-content">
+        <text class="stat-value">¥{{stats.todaySales}}</text>
+        <text class="stat-label">今日销售额</text>
+      </view>
+    </view>
+    <view class="stat-card">
+      <text class="stat-icon">📦</text>
+      <view class="stat-content">
+        <text class="stat-value">{{stats.todayOrders}}</text>
+        <text class="stat-label">今日订单</text>
+      </view>
+    </view>
+    <view class="stat-card">
+      <text class="stat-icon">👥</text>
+      <view class="stat-content">
+        <text class="stat-value">{{stats.newUsers}}</text>
+        <text class="stat-label">新增用户</text>
+      </view>
+    </view>
+    <view class="stat-card">
+      <text class="stat-icon">🎫</text>
+      <view class="stat-content">
+        <text class="stat-value">{{stats.couponUsed}}</text>
+        <text class="stat-label">优惠券使用</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">热销商品 TOP5</text>
+    </view>
+    <view class="hot-goods">
+      <view class="goods-item" wx:for="{{hotGoods}}" wx:key="_id">
+        <view class="goods-rank {{index < 3 ? 'top' : ''}}">{{index + 1}}</view>
+        <view class="goods-info">
+          <text class="goods-name">{{item.name}}</text>
+          <text class="goods-sales">销量: {{item.totalSales}}</text>
+        </view>
+        <text class="goods-revenue">¥{{item.totalRevenue}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">订单列表</text>
+      <view class="filter-tabs">
+        <view class="filter-tab {{orderFilter === 'all' ? 'active' : ''}}" bindtap="filterOrders" data-filter="all">全部</view>
+        <view class="filter-tab {{orderFilter === 'pending' ? 'active' : ''}}" bindtap="filterOrders" data-filter="pending">待付款</view>
+        <view class="filter-tab {{orderFilter === 'paid' ? 'active' : ''}}" bindtap="filterOrders" data-filter="paid">待配送</view>
+        <view class="filter-tab {{orderFilter === 'completed' ? 'active' : ''}}" bindtap="filterOrders" data-filter="completed">已完成</view>
+      </view>
+    </view>
+    <view class="order-list">
+      <view class="order-item" wx:for="{{orders}}" wx:key="_id" bindtap="viewOrder" data-id="{{item._id}}">
+        <view class="order-header">
+          <view class="order-info">
+            <text class="order-index">#{{item.orderIndex}}</text>
+            <text class="order-no">{{item.orderNo || item._id}}</text>
+          </view>
+          <text class="order-status {{item.status}}">{{statusMap[item.status]}}</text>
+        </view>
+        <view class="order-customer" wx:if="{{item.userInfo}}">
+          <text class="customer-name">👤 {{item.userInfo.nickname || '匿名用户'}}</text>
+          <text class="customer-phone" wx:if="{{item.userInfo.phone}}">📱 {{item.userInfo.phone}}</text>
+        </view>
+        <view class="order-goods">
+          <view class="goods-item" wx:for="{{item.goods}}" wx:for-item="goods" wx:key="id">
+            <text class="goods-emoji">{{goods.emoji || '🍎'}}</text>
+            <text class="goods-name">{{goods.name}}</text>
+            <text class="goods-quantity">× {{goods.quantity}}</text>
+            <text class="goods-price">¥{{goods.price}}</text>
+          </view>
+        </view>
+        <view class="order-delivery">
+          <text wx:if="{{item.deliveryType === 'pickup'}}">🚶 到店自提</text>
+          <text wx:else>🚚 配送上门</text>
+          <text wx:if="{{item.deliveryTime}}"> | 📅 {{item.deliveryTime.date}} {{item.deliveryTime.timeSlot}}</text>
+        </view>
+        <view class="order-footer">
+          <text class="order-time">{{item.createTime}}</text>
+          <text class="order-total">¥{{item.priceDetail.total}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">资金明细</text>
+    </view>
+    <view class="finance-summary">
+      <view class="finance-item">
+        <text class="finance-label">今日收入</text>
+        <text class="finance-value income">+¥{{finance.todayIncome}}</text>
+      </view>
+      <view class="finance-item">
+        <text class="finance-label">本月收入</text>
+        <text class="finance-value income">+¥{{finance.monthIncome}}</text>
+      </view>
+      <view class="finance-item">
+        <text class="finance-label">待结算</text>
+        <text class="finance-value">¥{{finance.pending}}</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,249 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.map {
+  width: 100%;
+  height: 300rpx;
+  position: relative;
+}
+
+.map-tip {
+  position: absolute;
+  bottom: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+}
+
+.map-tip text {
+  color: #fff;
+  font-size: 24rpx;
+}
+
+.form-container {
+  flex: 1;
+  padding: 20rpx;
+  padding-bottom: 140rpx;
+}
+
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+}
+
+.address-header {
+  padding: 10rpx 0;
+}
+
+.address-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.address-name .name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.edit-btn {
+  font-size: 26rpx;
+  color: #1890ff;
+}
+
+.distance-row {
+  display: flex;
+  align-items: center;
+}
+
+.distance {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.form-item .label {
+  width: 140rpx;
+  font-size: 28rpx;
+  color: #333;
+  flex-shrink: 0;
+}
+
+.form-item .input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.form-item .textarea {
+  width: 100%;
+  min-height: 120rpx;
+  font-size: 28rpx;
+  color: #333;
+  margin-top: 10rpx;
+}
+
+.form-tip {
+  padding: 12rpx 0 0 140rpx;
+}
+
+.form-tip text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.name-input {
+  flex: 1;
+}
+
+.gender-selector {
+  display: flex;
+  gap: 16rpx;
+  margin-left: 20rpx;
+}
+
+.gender-option {
+  padding: 8rpx 24rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.gender-option.active {
+  background: #1890ff;
+  border-color: #1890ff;
+  color: #fff;
+}
+
+.phone-row {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.country-code {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 16rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+}
+
+.country-code text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.country-code .arrow {
+  font-size: 20rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.phone-input {
+  flex: 1;
+}
+
+.tags-row {
+  display: flex;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.tag {
+  padding: 8rpx 24rpx;
+  border: 2rpx solid #ddd;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+
+.tag.active {
+  background: #1890ff;
+  border-color: #1890ff;
+  color: #fff;
+}
+
+.paste-item {
+  flex-wrap: wrap;
+}
+
+.paste-row {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+}
+
+.paste-input {
+  flex: 1;
+}
+
+.paste-btn {
+  padding: 12rpx 24rpx;
+  background: #1890ff;
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 8rpx;
+  margin-left: 16rpx;
+  border: none;
+}
+
+.paste-btn::after {
+  border: none;
+}
+
+.detail-section .form-item {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.detail-section .label {
+  margin-bottom: 16rpx;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 30rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.save-btn {
+  width: 100%;
+  height: 88rpx;
+  background: #ccc;
+  color: #fff;
+  font-size: 32rpx;
+  border-radius: 44rpx;
+  border: none;
+}
+
+.save-btn.active {
+  background: linear-gradient(135deg, #43A047 0%, #2E7D32 100%);
+}
+
+.save-btn[disabled] {
+  background: #ccc;
+  color: #fff;
+}

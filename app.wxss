@@ -1,0 +1,10 @@
+page {
+  background-color: #f8fcf8;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.container {
+  min-height: 100vh;
+  background-color: #f8fcf8;
+}

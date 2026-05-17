@@ -1,0 +1,15 @@
+{
+  "tencentMapKey": "在此填入你的腾讯地图Key",
+  "shop": {
+    "name": "泽明果业",
+    "address": "在此填入店铺地址",
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "phone": "在此填入店铺电话"
+  },
+  "deliveryConfig": {
+    "maxDistance": 3,
+    "deliveryFee": 5,
+    "freeDeliveryDistance": 0
+  }
+}

@@ -1,0 +1,119 @@
+<view class="container">
+  <view class="header">
+    <text class="title">创建优惠券</text>
+  </view>
+
+  <form bindsubmit="submitForm">
+    <view class="form-section">
+      <view class="form-item">
+        <text class="label">优惠券名称</text>
+        <input class="input" name="name" placeholder="如：夏日鲜果券" value="{{form.name}}" bindinput="onInputChange" data-field="name" />
+      </view>
+
+      <view class="form-item">
+        <text class="label">优惠券类型</text>
+        <picker mode="selector" range="{{couponTypes}}" range-key="label" value="{{typeIndex}}" bindchange="onTypeChange">
+          <view class="picker">
+            {{couponTypes[typeIndex].label}} <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="label">优惠方式</text>
+        <picker mode="selector" range="{{discountTypes}}" range-key="label" value="{{discountIndex}}" bindchange="onDiscountChange">
+          <view class="picker">
+            {{discountTypes[discountIndex].label}} <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item" wx:if="{{discountIndex === 0}}">
+        <text class="label">减免金额（元）</text>
+        <input class="input" type="digit" name="value" placeholder="如：10" value="{{form.value}}" bindinput="onInputChange" data-field="value" />
+      </view>
+
+      <view class="form-item" wx:if="{{discountIndex === 1}}">
+        <text class="label">折扣比例</text>
+        <input class="input" type="digit" name="discount" placeholder="如：8 表示8折" value="{{form.discount}}" bindinput="onInputChange" data-field="discount" />
+      </view>
+
+      <view class="form-item">
+        <text class="label">使用门槛（元）</text>
+        <input class="input" type="digit" name="threshold" placeholder="如：98 表示满98可用" value="{{form.threshold}}" bindinput="onInputChange" data-field="threshold" />
+      </view>
+
+      <view class="form-item">
+        <text class="label">库存数量</text>
+        <input class="input" type="number" name="stock" placeholder="如：1000" value="{{form.stock}}" bindinput="onInputChange" data-field="stock" />
+      </view>
+
+      <view class="form-item">
+        <text class="label">适用范围</text>
+        <picker mode="selector" range="{{scopeTypes}}" range-key="label" value="{{scopeIndex}}" bindchange="onScopeChange">
+          <view class="picker">
+            {{scopeTypes[scopeIndex].label}} <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item" wx:if="{{scopeIndex === 1}}">
+        <text class="label">选择商品</text>
+        <view class="goods-list">
+          <view class="goods-item" wx:for="{{products}}" wx:key="_id" bindtap="toggleGoods" data-id="{{item._id}}">
+            <view class="checkbox {{selectedGoods.indexOf(item._id) > -1 ? 'checked' : ''}}">
+              <text wx:if="{{selectedGoods.indexOf(item._id) > -1}}">✓</text>
+            </view>
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="label">有效期</text>
+        <view class="date-range">
+          <picker mode="date" value="{{form.validFrom}}" bindchange="onDateChange" data-field="validFrom">
+            <view class="picker-date">{{form.validFrom || '开始日期'}}</view>
+          </picker>
+          <text class="date-separator">至</text>
+          <picker mode="date" value="{{form.validTo}}" bindchange="onDateChange" data-field="validTo">
+            <view class="picker-date">{{form.validTo || '结束日期'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-item" wx:if="{{typeIndex === 2}}">
+        <text class="label">领取口令</text>
+        <input class="input" name="password" placeholder="如：鲜果666" value="{{form.password}}" bindinput="onInputChange" data-field="password" />
+      </view>
+
+      <view class="form-item">
+        <text class="label">备注说明</text>
+        <textarea class="textarea" name="description" placeholder="优惠券使用说明" value="{{form.description}}" bindinput="onInputChange" data-field="description" />
+      </view>
+    </view>
+
+    <view class="preview-section">
+      <text class="preview-title">优惠券预览</text>
+      <view class="coupon-preview">
+        <view class="coupon-left">
+          <text class="coupon-value">
+            <text wx:if="{{discountIndex === 0}}">¥{{form.value || 0}}</text>
+            <text wx:else>{{form.discount || 0}}折</text>
+          </text>
+          <text class="coupon-threshold">满{{form.threshold || 0}}可用</text>
+        </view>
+        <view class="coupon-right">
+          <text class="coupon-name">{{form.name || '优惠券名称'}}</text>
+          <text class="coupon-type">{{couponTypes[typeIndex].label}}</text>
+          <text class="coupon-valid">{{form.validFrom}} - {{form.validTo}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="button-group">
+      <button class="btn btn-cancel" bindtap="cancelCreate">取消</button>
+      <button class="btn btn-submit" form-type="submit" loading="{{loading}}">创建优惠券</button>
+    </view>
+  </form>
+</view>

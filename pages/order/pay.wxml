@@ -1,0 +1,246 @@
+<view class="container">
+  <view class="delivery-tabs">
+    <view class="tab {{deliveryType === 'pickup' ? 'active' : ''}}" bindtap="selectDeliveryType" data-type="pickup">
+      <text>到店自取</text>
+    </view>
+    <view class="tab {{deliveryType === 'delivery' ? 'active' : ''}}" bindtap="selectDeliveryType" data-type="delivery">
+      <text>送货上门</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="content">
+    <view class="section" wx:if="{{deliveryType === 'pickup'}}">
+      <view class="pickup-info">
+        <view class="pickup-header">
+          <text class="pickup-name">泽明果业</text>
+          <text class="pickup-distance" wx:if="{{pickupDistance}}">距您 {{pickupDistance}}</text>
+        </view>
+        <view class="pickup-address">
+          <text>江苏省淮安市清江浦区济南路东冠逸景花苑 1 号楼 1-5.1-6 号</text>
+        </view>
+        <view class="pickup-time">
+          <text>营业时间：08:00 - 21:00</text>
+        </view>
+        <view class="pickup-phone">
+          <text>联系电话：15250878388</text>
+        </view>
+        <view class="pickup-map" bindtap="openMap">
+          <text class="map-icon">🗺️</text>
+          <text class="map-text">查看地图导航</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section" wx:if="{{deliveryType === 'delivery'}}">
+      <view class="address-card" bindtap="chooseAddress">
+        <view class="address-content" wx:if="{{address}}">
+          <view class="address-header">
+            <text class="contact-name">{{address.userName}}</text>
+            <text class="contact-phone">{{address.telNumber}}</text>
+          </view>
+          <view class="address-detail">
+            {{address.provinceName}}{{address.cityName}}{{address.countyName}}{{address.detailInfo}}
+          </view>
+          <view class="address-distance" wx:if="{{deliveryInfo}}">
+            <text class="distance-badge {{deliveryInfo.canDeliver ? '' : 'error'}}">
+              <block wx:if="{{deliveryInfo.canDeliver}}">距您{{deliveryInfo.distanceStr}}km</block>
+              <block wx:else>超出配送范围</block>
+            </text>
+          </view>
+        </view>
+        <view class="address-empty" wx:else>
+          <text class="empty-icon">📍</text>
+          <text class="empty-text">请选择收货地址</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">配送时间</text>
+      </view>
+      <view class="time-options">
+        <view class="time-option {{deliveryTime === 'now' ? 'active' : ''}}" bindtap="selectDeliveryTime" data-time="now">
+          <view class="time-radio"></view>
+          <view class="time-content">
+            <text class="time-title">{{deliveryType === 'pickup' ? '立即自提' : '立即配送'}}</text>
+            <text class="time-desc">{{deliveryType === 'pickup' ? '约30分钟可取' : '约30分钟送达'}}</text>
+          </view>
+        </view>
+        <view class="time-option {{deliveryTime === 'schedule' ? 'active' : ''}}" bindtap="selectDeliveryTime" data-time="schedule">
+          <view class="time-radio"></view>
+          <view class="time-content">
+            <text class="time-title">预约{{deliveryType === 'pickup' ? '自提' : '配送'}}</text>
+            <text class="time-desc">{{scheduleDate ? scheduleDate + ' ' + timeSlots[scheduleTimeIndex] : '选择时间'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="schedule-picker" wx:if="{{deliveryTime === 'schedule'}}">
+        <picker mode="date" value="{{scheduleDate}}" start="{{minDate}}" bindchange="onScheduleDateChange">
+          <view class="picker-row">
+            <text class="picker-label">日期</text>
+            <view class="picker-value">
+              <text>{{scheduleDate || '选择日期'}}</text>
+              <text class="arrow">›</text>
+            </view>
+          </view>
+        </picker>
+        <picker mode="selector" range="{{timeSlots}}" value="{{scheduleTimeIndex}}" bindchange="onScheduleTimeChange">
+          <view class="picker-row">
+            <text class="picker-label">时间段</text>
+            <view class="picker-value">
+              <text>{{timeSlots[scheduleTimeIndex]}}</text>
+              <text class="arrow">›</text>
+            </view>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">商品清单</text>
+        <text class="goods-count">共{{goodsCount}}件</text>
+      </view>
+      <view class="goods-list">
+        <view class="goods-item" wx:for="{{goods}}" wx:key="id">
+          <view class="goods-image">
+            <image wx:if="{{item.imageUrl}}" class="product-img" src="{{item.imageUrl}}" mode="aspectFill"></image>
+            <text wx:else>{{item.emoji || '🍎'}}</text>
+          </view>
+          <view class="goods-info">
+            <text class="goods-name">{{item.name}}</text>
+            <view class="price-row">
+              <text class="goods-price">¥{{item.price}}</text>
+              <text class="goods-original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+            </view>
+          </view>
+          <view class="goods-quantity">×{{item.quantity}}</view>
+          <text class="goods-total">¥{{item.totalPrice}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">费用明细</text>
+      </view>
+      <view class="fee-list">
+        <view class="fee-item">
+          <text>商品总价</text>
+          <text>¥{{priceDetail.goodsTotal}}</text>
+        </view>
+        <view class="fee-item" wx:if="{{deliveryType === 'delivery'}}">
+          <text>配送费</text>
+          <text wx:if="{{deliveryInfo && deliveryInfo.canDeliver}}">¥{{deliveryInfo.deliveryFee}}</text>
+          <text wx:else class="fee-error">超出范围</text>
+        </view>
+        <view class="fee-item discount" wx:if="{{priceDetail.couponDiscount > 0}}">
+          <text>优惠券</text>
+          <text>-¥{{priceDetail.couponDiscount}}</text>
+        </view>
+        <view class="fee-item discount" wx:if="{{priceDetail.activityDiscount > 0}}">
+          <text>商家活动优惠</text>
+          <text>-¥{{priceDetail.activityDiscount}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section" wx:if="{{deliveryType === 'pickup'}}">
+      <view class="section-header">
+        <text class="section-title">订单备注</text>
+      </view>
+      <textarea class="remark-input" placeholder="请填写您的要求" bindinput="onRemarkInput" value="{{remark}}" />
+      <view class="remark-options">
+        <view class="remark-option {{outOfStockOption === 'call' ? 'active' : ''}}" bindtap="selectOutOfStock" data-value="call">
+          <view class="check-box"></view>
+          <text>缺货时电话与我沟通</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">优惠券</text>
+      </view>
+      <view class="coupon-selector" bindtap="showCouponPicker">
+        <text wx:if="{{selectedCoupon}}">{{selectedCoupon.name}} -¥{{selectedCoupon.calculatedDiscount}}</text>
+        <text wx:elif="{{availableCoupons.length > 0}}">{{availableCoupons.length}}张优惠券可用</text>
+        <text wx:else>暂无可用优惠券</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="bottom-placeholder"></view>
+  </scroll-view>
+
+  <view class="footer">
+    <view class="footer-left">
+      <view class="price-row">
+        <text class="price-label">实付</text>
+        <text class="price-value">¥{{priceDetail.total}}</text>
+      </view>
+      <text class="discount-tip" wx:if="{{priceDetail.totalDiscount > 0}}">共减 ¥{{priceDetail.totalDiscount}}</text>
+    </view>
+    <view class="pay-btn {{canPay ? '' : 'disabled'}}" bindtap="submitOrder">
+      <text>普通支付</text>
+    </view>
+  </view>
+  
+  <view class="agreement-section">
+    <view class="agreement-row" bindtap="showPrivacyModal">
+      <view class="check-box {{agreedTerms ? 'checked' : ''}}"></view>
+      <text class="agreement-text">我已阅读并同意</text>
+      <text class="agreement-link">《服务协议》</text>
+      <text class="agreement-link">《隐私政策》</text>
+    </view>
+  </view>
+
+  <view class="privacy-modal-pay" wx:if="{{showPrivacyModal}}" catchtouchmove="preventMove">
+    <view class="privacy-mask" bindtap="closePrivacyModal"></view>
+    <view class="privacy-dialog">
+      <view class="privacy-title">服务协议与隐私政策</view>
+      <view class="privacy-content">
+        <text class="privacy-text">在提交订单前，请您仔细阅读以下协议：</text>
+        <view class="privacy-list">
+          <text class="privacy-item" bindtap="viewServiceAgreement">• 《用户服务条款》：订单规则、退换货政策等</text>
+          <text class="privacy-item" bindtap="viewPrivacyPolicy">• 《用户隐私协议》：信息收集、使用和保护说明</text>
+        </view>
+        <text class="privacy-text privacy-warning">点击"同意并继续"即表示您已阅读并同意以上所有条款。</text>
+      </view>
+      <view class="privacy-buttons">
+        <button class="privacy-btn disagree" bindtap="disagreePrivacy">不同意</button>
+        <button class="privacy-btn agree" bindtap="agreePrivacy">同意并继续</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="coupon-modal" wx:if="{{showCouponModal}}" bindtap="hideCouponPicker">
+    <view class="coupon-modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">选择优惠券</text>
+        <text class="modal-close" bindtap="hideCouponPicker">×</text>
+      </view>
+      <scroll-view class="coupon-list" scroll-y>
+        <view class="coupon-item {{selectedCoupon && selectedCoupon.id === item.id ? 'selected' : ''}}" 
+              wx:for="{{availableCoupons}}" 
+              wx:key="id"
+              bindtap="selectCoupon"
+              data-item="{{item}}">
+          <view class="coupon-left">
+            <text class="coupon-value">¥{{item.calculatedDiscount}}</text>
+            <text class="coupon-threshold">满{{item.threshold}}可用</text>
+          </view>
+          <view class="coupon-right">
+            <text class="coupon-name">{{item.name}}</text>
+            <text class="coupon-type">{{item.type === 'discount' ? '通用券' : '活动券'}}</text>
+          </view>
+        </view>
+        <view class="no-coupon" bindtap="selectCoupon" data-item="{{null}}">
+          <text>不使用优惠券</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

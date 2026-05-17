@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/category/category",
+    "pages/cart/cart",
+    "pages/mine/mine",
+    "pages/checkout/checkout",
+    "pages/orders/orders",
+    "pages/orderDetail/orderDetail",
+    "pages/address/address",
+    "pages/address/add",
+    "pages/recharge/recharge",
+    "pages/login/login",
+    "pages/admin/admin",
+    "pages/coupon-admin/create",
+    "pages/coupon-admin/list",
+    "pages/order/pay",
+    "pages/admin-dashboard/index",
+    "pages/admin-managers/index",
+    "pages/admin-product/batch-import",
+    "pages/admin-settings/index"
+  ],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于计算配送距离"
+    }
+  },
+  "requiredPrivateInfos": [
+    "chooseAddress",
+    "chooseLocation",
+    "getLocation"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#43A047",
+    "navigationBarTitleText": "泽明果业",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#43A047",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类"
+      },
+      {
+        "pagePath": "pages/cart/cart",
+        "text": "购物车"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

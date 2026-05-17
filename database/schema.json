@@ -1,0 +1,496 @@
+{
+  "collections": {
+    "users": {
+      "description": "用户信息集合",
+      "schema": {
+        "_id": {
+          "type": "string",
+          "description": "文档ID，自动生成"
+        },
+        "_openid": {
+          "type": "string",
+          "description": "用户OpenID，系统自动填充"
+        },
+        "nickname": {
+          "type": "string",
+          "description": "用户昵称"
+        },
+        "avatar": {
+          "type": "string",
+          "description": "用户头像URL（cloud://或https://）"
+        },
+        "phone": {
+          "type": "string",
+          "description": "手机号（明文，已解密）",
+          "example": "13812345678"
+        },
+        "purePhone": {
+          "type": "string",
+          "description": "纯数字手机号"
+        },
+        "countryCode": {
+          "type": "string",
+          "description": "国家代码",
+          "default": "86"
+        },
+        "addresses": {
+          "type": "array",
+          "description": "收货地址列表",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "地址ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "收货人姓名"
+              },
+              "phone": {
+                "type": "string",
+                "description": "联系电话"
+              },
+              "province": {
+                "type": "string",
+                "description": "省份"
+              },
+              "city": {
+                "type": "string",
+                "description": "城市"
+              },
+              "district": {
+                "type": "string",
+                "description": "区县"
+              },
+              "detail": {
+                "type": "string",
+                "description": "详细地址"
+              },
+              "fullAddress": {
+                "type": "string",
+                "description": "完整地址"
+              },
+              "isDefault": {
+                "type": "boolean",
+                "description": "是否默认地址",
+                "default": false
+              }
+            }
+          }
+        },
+        "balance": {
+          "type": "number",
+          "description": "账户余额",
+          "default": 0
+        },
+        "totalSpent": {
+          "type": "number",
+          "description": "累计消费金额",
+          "default": 0
+        },
+        "orderCount": {
+          "type": "number",
+          "description": "订单数量",
+          "default": 0
+        },
+        "firstOrderAt": {
+          "type": "date",
+          "description": "首单时间"
+        },
+        "lastOrderAt": {
+          "type": "date",
+          "description": "最近下单时间"
+        },
+        "phoneUpdatedAt": {
+          "type": "date",
+          "description": "手机号更新时间"
+        },
+        "createTime": {
+          "type": "date",
+          "description": "创建时间"
+        },
+        "updatedAt": {
+          "type": "date",
+          "description": "更新时间"
+        }
+      },
+      "indexes": [
+        {
+          "keys": { "_openid": 1 },
+          "options": { "unique": true }
+        }
+      ],
+      "rules": {
+        "read": "doc._openid == auth.openid",
+        "write": "doc._openid == auth.openid"
+      }
+    },
+
+    "products": {
+      "description": "商品信息集合",
+      "schema": {
+        "_id": {
+          "type": "string",
+          "description": "商品ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "商品名称",
+          "required": true
+        },
+        "price": {
+          "type": "number",
+          "description": "现价",
+          "required": true
+        },
+        "originalPrice": {
+          "type": "number",
+          "description": "原价",
+          "nullable": true
+        },
+        "unit": {
+          "type": "string",
+          "description": "单位",
+          "default": "份"
+        },
+        "category": {
+          "type": "string",
+          "description": "分类ID",
+          "enum": ["premium", "berry", "imported", "freshcut", "dried", "snacks", "seckill", "recommend", "activity"]
+        },
+        "tag": {
+          "type": "string",
+          "description": "促销标签",
+          "example": "热销、新品、特价、进口"
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "商品图片URL（cloud://或https://）"
+        },
+        "emoji": {
+          "type": "string",
+          "description": "商品表情图标",
+          "default": "🍎"
+        },
+        "brand": {
+          "type": "string",
+          "description": "品牌",
+          "default": "泽明"
+        },
+        "sales": {
+          "type": "number",
+          "description": "月销量",
+          "default": 0
+        },
+        "stock": {
+          "type": "number",
+          "description": "库存数量",
+          "default": 999
+        },
+        "status": {
+          "type": "string",
+          "description": "商品状态",
+          "enum": ["active", "inactive", "soldout"],
+          "default": "active"
+        },
+        "description": {
+          "type": "string",
+          "description": "商品描述"
+        },
+        "createTime": {
+          "type": "date",
+          "description": "创建时间"
+        },
+        "updateTime": {
+          "type": "date",
+          "description": "更新时间"
+        }
+      },
+      "indexes": [
+        {
+          "keys": { "category": 1, "status": 1 }
+        },
+        {
+          "keys": { "sales": -1 }
+        }
+      ],
+      "rules": {
+        "read": true,
+        "write": "auth.openid in get('database.admins').data.adminOpenids"
+      }
+    },
+
+    "orders": {
+      "description": "订单集合",
+      "schema": {
+        "_id": {
+          "type": "string",
+          "description": "订单ID"
+        },
+        "_openid": {
+          "type": "string",
+          "description": "用户OpenID"
+        },
+        "orderNo": {
+          "type": "string",
+          "description": "订单编号",
+          "example": "ZM202603160001"
+        },
+        "goods": {
+          "type": "array",
+          "description": "商品列表",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "price": { "type": "number" },
+              "quantity": { "type": "number" },
+              "emoji": { "type": "string" }
+            }
+          }
+        },
+        "deliveryType": {
+          "type": "string",
+          "description": "配送方式",
+          "enum": ["pickup", "delivery"]
+        },
+        "address": {
+          "type": "object",
+          "description": "收货地址",
+          "properties": {
+            "userName": { "type": "string" },
+            "telNumber": { "type": "string" },
+            "provinceName": { "type": "string" },
+            "cityName": { "type": "string" },
+            "countyName": { "type": "string" },
+            "detailInfo": { "type": "string" }
+          }
+        },
+        "deliveryTime": {
+          "type": "object",
+          "description": "预约配送时间",
+          "properties": {
+            "date": { "type": "string" },
+            "timeSlot": { "type": "string" }
+          }
+        },
+        "coupon": {
+          "type": "object",
+          "description": "使用的优惠券",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "discount": { "type": "number" }
+          }
+        },
+        "remark": {
+          "type": "string",
+          "description": "备注"
+        },
+        "priceDetail": {
+          "type": "object",
+          "description": "价格明细",
+          "properties": {
+            "goodsTotal": { "type": "number", "description": "商品总价" },
+            "couponDiscount": { "type": "number", "description": "优惠券抵扣" },
+            "deliveryFee": { "type": "number", "description": "配送费" },
+            "total": { "type": "number", "description": "实付金额" }
+          }
+        },
+        "status": {
+          "type": "string",
+          "description": "订单状态",
+          "enum": ["pending", "paid", "preparing", "delivering", "completed", "cancelled"],
+          "default": "pending"
+        },
+        "paidAt": {
+          "type": "date",
+          "description": "支付时间"
+        },
+        "completedAt": {
+          "type": "date",
+          "description": "完成时间"
+        },
+        "createTime": {
+          "type": "date",
+          "description": "创建时间"
+        }
+      },
+      "indexes": [
+        {
+          "keys": { "_openid": 1, "createTime": -1 }
+        },
+        {
+          "keys": { "status": 1 }
+        }
+      ],
+      "rules": {
+        "read": "doc._openid == auth.openid || auth.openid in get('database.admins').data.adminOpenids",
+        "write": "doc._openid == auth.openid || auth.openid in get('database.admins').data.adminOpenids"
+      }
+    },
+
+    "coupons": {
+      "description": "优惠券集合",
+      "schema": {
+        "_id": {
+          "type": "string",
+          "description": "优惠券ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "优惠券名称"
+        },
+        "discountType": {
+          "type": "string",
+          "description": "优惠类型",
+          "enum": ["cash", "percent"]
+        },
+        "value": {
+          "type": "number",
+          "description": "优惠金额（现金券）"
+        },
+        "discount": {
+          "type": "number",
+          "description": "折扣比例（折扣券，如9表示9折）"
+        },
+        "threshold": {
+          "type": "number",
+          "description": "使用门槛金额"
+        },
+        "totalCount": {
+          "type": "number",
+          "description": "总发行量"
+        },
+        "usedCount": {
+          "type": "number",
+          "description": "已使用数量",
+          "default": 0
+        },
+        "status": {
+          "type": "string",
+          "description": "状态",
+          "enum": ["active", "inactive", "expired"],
+          "default": "active"
+        },
+        "startTime": {
+          "type": "date",
+          "description": "生效开始时间"
+        },
+        "endTime": {
+          "type": "date",
+          "description": "生效结束时间"
+        },
+        "createTime": {
+          "type": "date",
+          "description": "创建时间"
+        }
+      },
+      "indexes": [
+        {
+          "keys": { "status": 1, "endTime": 1 }
+        }
+      ]
+    },
+
+    "recharge_records": {
+      "description": "充值记录集合",
+      "schema": {
+        "_id": {
+          "type": "string",
+          "description": "记录ID"
+        },
+        "_openid": {
+          "type": "string",
+          "description": "用户OpenID"
+        },
+        "amount": {
+          "type": "number",
+          "description": "充值金额"
+        },
+        "bonus": {
+          "type": "number",
+          "description": "赠送金额",
+          "default": 0
+        },
+        "totalBalance": {
+          "type": "number",
+          "description": "充值后余额"
+        },
+        "status": {
+          "type": "string",
+          "description": "状态",
+          "enum": ["pending", "success", "failed"],
+          "default": "pending"
+        },
+        "createTime": {
+          "type": "date",
+          "description": "创建时间"
+        }
+      },
+      "indexes": [
+        {
+          "keys": { "_openid": 1, "createTime": -1 }
+        }
+      ]
+    },
+
+    "admins": {
+      "description": "管理员集合",
+      "schema": {
+        "_id": {
+          "type": "string",
+          "description": "文档ID"
+        },
+        "adminOpenids": {
+          "type": "array",
+          "description": "管理员OpenID列表",
+          "items": {
+            "type": "string"
+          }
+        },
+        "updateTime": {
+          "type": "date",
+          "description": "更新时间"
+        }
+      },
+      "rules": {
+        "read": true,
+        "write": false
+      }
+    }
+  },
+
+  "securityRules": {
+    "description": "安全规则说明",
+    "rules": {
+      "users": "用户只能读写自己的数据",
+      "products": "所有人可读，仅管理员可写",
+      "orders": "用户只能读写自己的订单，管理员可读写所有订单",
+      "coupons": "所有人可读，仅管理员可写",
+      "recharge_records": "用户只能读写自己的充值记录",
+      "admins": "所有人可读（用于权限判断），不可写（通过云函数管理）"
+    }
+  },
+
+  "initialData": {
+    "admins": [
+      {
+        "adminOpenids": ["od_cz3QbJT7rJnill3ACZM45K4pY"]
+      }
+    ],
+    "coupons": [
+      {
+        "name": "新人专享券",
+        "discountType": "cash",
+        "value": 10,
+        "threshold": 50,
+        "totalCount": 1000,
+        "usedCount": 0,
+        "status": "active"
+      }
+    ]
+  }
+}

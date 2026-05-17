@@ -1,0 +1,130 @@
+<view class="container">
+  <view class="header">
+    <view class="location">
+      <text class="location-icon">📍</text>
+      <text class="location-text">泽明果业 (总店)</text>
+    </view>
+    <view class="search-box" bindtap="goToSearch">
+      <text class="search-icon">🔍</text>
+      <text class="search-placeholder">搜索水果、零食...</text>
+    </view>
+    <view class="header-btns">
+      <view class="header-btn" bindtap="shareApp">
+        <text>📤</text>
+      </view>
+      <view class="header-btn" bindtap="goToMember">
+        <text>👑</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="notice-bar">
+    <text class="notice-icon">📍</text>
+    <text class="notice-text">店铺地址：江苏省淮安市清江浦区济南路东冠逸景花苑 1 号楼 1-5.1-6 号 泽明果业</text>
+  </view>
+
+  <view class="notice-bar">
+    <text class="notice-icon">📢</text>
+    <swiper class="notice-swiper" vertical autoplay circular interval="3000">
+      <swiper-item wx:for="{{notices}}" wx:key="index">
+        <text class="notice-text">{{item}}</text>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <swiper class="banner-swiper" autoplay circular indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#43A047">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <view class="banner-item" style="background: {{item.bgColor}}">
+        <view class="banner-content">
+          <text class="banner-title">{{item.title}}</text>
+          <text class="banner-subtitle">{{item.subtitle}}</text>
+        </view>
+        <text class="banner-emoji">{{item.emoji}}</text>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <view class="quick-entry">
+    <view class="entry-item" wx:for="{{quickEntries}}" wx:key="id" bindtap="goToCategory" data-id="{{item.id}}">
+      <view class="entry-icon" style="background: {{item.bgColor}}">
+        <text>{{item.emoji}}</text>
+      </view>
+      <text class="entry-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="seckill-section">
+    <view class="seckill-header">
+      <view class="seckill-title">
+        <text class="flash-icon">⚡</text>
+        <text class="title-text">限时秒杀</text>
+      </view>
+      <view class="seckill-countdown">
+        <text class="countdown-label">距结束</text>
+        <view class="countdown-time">
+          <text class="time-block">{{countdown.hours}}</text>
+          <text class="time-sep">:</text>
+          <text class="time-block">{{countdown.minutes}}</text>
+          <text class="time-sep">:</text>
+          <text class="time-block">{{countdown.seconds}}</text>
+        </view>
+      </view>
+    </view>
+
+    <scroll-view scroll-x class="seckill-scroll">
+      <view class="seckill-list">
+        <view class="seckill-card" wx:for="{{seckillProducts}}" wx:key="id">
+          <view class="seckill-image">
+            <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" class="seckill-img"></image>
+            <text wx:if="{{!item.imageUrl}}" class="seckill-emoji">{{item.emoji}}</text>
+          </view>
+          <view class="seckill-info">
+            <text class="seckill-name">{{item.name}}</text>
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{item.progress}}%"></view>
+            </view>
+            <text class="progress-text">已抢{{item.sold}}件 / 仅剩{{item.remain}}件</text>
+            <view class="seckill-price-row">
+              <text class="seckill-price">¥{{item.price}}</text>
+              <text class="seckill-original">¥{{item.originalPrice}}</text>
+            </view>
+            <view class="limit-tag" wx:if="{{item.limit}}">限购{{item.limit}}件</view>
+          </view>
+          <view class="seckill-btn" bindtap="buySeckill" data-item="{{item}}">立即抢购</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="hot-section">
+    <view class="section-header">
+      <text class="section-title">🔥 热销推荐</text>
+      <view class="view-more" bindtap="goToCategory" data-id="hot">
+        <text>查看更多</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+    <view class="hot-grid">
+      <view class="hot-card" wx:for="{{hotProducts}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+        <view class="hot-image">
+          <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" class="hot-img"></image>
+          <text wx:if="{{!item.imageUrl}}" class="hot-emoji">{{item.emoji}}</text>
+          <view class="hot-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+        </view>
+        <view class="hot-info">
+          <text class="hot-name">{{item.name}}</text>
+          <text class="hot-desc">{{item.description}}</text>
+          <view class="hot-bottom">
+            <view class="hot-price-row">
+              <text class="hot-price">¥{{item.price}}</text>
+              <text class="hot-original">¥{{item.originalPrice}}</text>
+            </view>
+            <view class="add-cart-btn" catchtap="addToCart" data-item="{{item}}">
+              <text>+</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

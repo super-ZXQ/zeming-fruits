@@ -1,0 +1,166 @@
+<view class="container">
+  <map 
+    id="map"
+    class="map"
+    longitude="{{longitude}}"
+    latitude="{{latitude}}"
+    scale="16"
+    show-location
+    markers="{{markers}}"
+    bindtap="onMapTap"
+  >
+    <view class="map-tip" bindtap="chooseLocation">
+      <text>📍 点击重新选择位置</text>
+    </view>
+  </map>
+
+  <scroll-view scroll-y class="form-container">
+    <view class="section">
+      <view class="address-header" bindtap="chooseLocation">
+        <view class="address-name">
+          <text class="name">{{poiName || '请选择位置'}}</text>
+          <text class="edit-btn">编辑</text>
+        </view>
+        <view class="distance-row">
+          <text class="distance" wx:if="{{distance}}">距您 {{distance}} 米</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="form-item">
+        <text class="label">门牌号</text>
+        <input 
+          class="input" 
+          placeholder="输入楼栋、门牌号，例A楼101" 
+          value="{{doorNumber}}"
+          bindinput="onDoorNumberInput"
+        />
+      </view>
+      <view class="form-tip">
+        <text>记得填门牌号信息，方便骑手准确配送</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="form-item">
+        <text class="label">联系人</text>
+        <input 
+          class="input name-input" 
+          placeholder="姓名" 
+          value="{{contactName}}"
+          bindinput="onNameInput"
+        />
+        <view class="gender-selector">
+          <view 
+            class="gender-option {{gender === 'male' ? 'active' : ''}}" 
+            bindtap="selectGender" 
+            data-gender="male"
+          >
+            先生
+          </view>
+          <view 
+            class="gender-option {{gender === 'female' ? 'active' : ''}}" 
+            bindtap="selectGender" 
+            data-gender="female"
+          >
+            女士
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="form-item">
+        <text class="label">手机号</text>
+        <view class="phone-row">
+          <view class="country-code" bindtap="showCountryCodePicker">
+            <text>+86</text>
+            <text class="arrow">▼</text>
+          </view>
+          <input 
+            class="input phone-input" 
+            type="number"
+            maxlength="11"
+            placeholder="手机号" 
+            value="{{phone}}"
+            bindinput="onPhoneInput"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="form-item">
+        <text class="label">标签</text>
+        <view class="tags-row">
+          <view 
+            class="tag {{selectedTags.includes('家') ? 'active' : ''}}" 
+            bindtap="toggleTag" 
+            data-tag="家"
+          >
+            家
+          </view>
+          <view 
+            class="tag {{selectedTags.includes('公司') ? 'active' : ''}}" 
+            bindtap="toggleTag" 
+            data-tag="公司"
+          >
+            公司
+          </view>
+          <view 
+            class="tag {{selectedTags.includes('学校') ? 'active' : ''}}" 
+            bindtap="toggleTag" 
+            data-tag="学校"
+          >
+            学校
+          </view>
+          <view 
+            class="tag {{selectedTags.includes('父母家') ? 'active' : ''}}" 
+            bindtap="toggleTag" 
+            data-tag="父母家"
+          >
+            父母家
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="form-item paste-item">
+        <text class="label">粘贴文本</text>
+        <view class="paste-row">
+          <input 
+            class="input paste-input" 
+            placeholder="粘贴文本，智能识别地址信息" 
+            value="{{pasteText}}"
+            bindinput="onPasteInput"
+          />
+          <button class="paste-btn" bindtap="parsePasteText">粘贴</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="section detail-section">
+      <view class="form-item">
+        <text class="label">详细地址</text>
+        <textarea 
+          class="textarea" 
+          placeholder="请输入详细地址" 
+          value="{{detailAddress}}"
+          bindinput="onDetailInput"
+        />
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="footer">
+    <button 
+      class="save-btn {{canSave ? 'active' : ''}}" 
+      bindtap="saveAddress"
+      disabled="{{!canSave}}"
+    >
+      保存地址
+    </button>
+  </view>
+</view>

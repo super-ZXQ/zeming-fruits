@@ -1,0 +1,224 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.header {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  padding: 40rpx 30rpx;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.add-btn {
+  background: rgba(255,255,255,0.2);
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+}
+
+.tabs {
+  display: flex;
+  background: white;
+  padding: 0 20rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 30rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab.active {
+  color: #52c41a;
+  font-weight: bold;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background: #52c41a;
+  border-radius: 2rpx;
+}
+
+.stats {
+  display: flex;
+  background: white;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #52c41a;
+}
+
+.stat-label {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 10rpx;
+}
+
+.coupon-list {
+  padding: 0 20rpx;
+}
+
+.coupon-item {
+  margin-bottom: 20rpx;
+}
+
+.coupon-card {
+  display: flex;
+  background: white;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.coupon-card.expired {
+  opacity: 0.6;
+}
+
+.coupon-left {
+  width: 200rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.coupon-value {
+  font-size: 48rpx;
+  font-weight: bold;
+}
+
+.coupon-threshold {
+  font-size: 24rpx;
+  margin-top: 10rpx;
+  opacity: 0.9;
+}
+
+.coupon-right {
+  flex: 1;
+  padding: 20rpx;
+}
+
+.coupon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15rpx;
+}
+
+.coupon-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.coupon-type {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  background: #f0f0f0;
+  color: #666;
+}
+
+.coupon-type.discount {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.coupon-type.activity {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+.coupon-type.hidden {
+  background: #f9f0ff;
+  color: #722ed1;
+}
+
+.coupon-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 15rpx;
+}
+
+.coupon-stock {
+  margin-bottom: 5rpx;
+}
+
+.coupon-actions {
+  display: flex;
+  gap: 15rpx;
+}
+
+.action-btn {
+  flex: 1;
+  text-align: center;
+  padding: 10rpx 0;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.action-btn.danger {
+  background: #fff1f0;
+  color: #ff4d4f;
+}
+
+.empty {
+  text-align: center;
+  padding: 100rpx 0;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+.empty-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  color: white;
+  padding: 20rpx 60rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}

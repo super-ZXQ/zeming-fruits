@@ -1,0 +1,67 @@
+<view class="container">
+  <view class="left-menu">
+    <scroll-view scroll-y class="menu-scroll">
+      <view class="menu-item {{currentCategory === item.id ? 'active' : ''}}" 
+            wx:for="{{categories}}" 
+            wx:key="id" 
+            bindtap="switchCategory" 
+            data-id="{{item.id}}">
+        <text>{{item.name}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="right-content">
+    <scroll-view scroll-y class="product-scroll" bindscrolltolower="loadMore">
+      <view class="product-list">
+        <view class="product-card" wx:for="{{products}}" wx:key="id">
+          <view class="product-image">
+            <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" class="product-img"></image>
+            <text wx:if="{{!item.imageUrl}}" class="product-emoji">{{item.emoji}}</text>
+            <view class="brand-logo" wx:if="{{item.brand}}">{{item.brand}}</view>
+          </view>
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
+            <view class="product-sales">月售{{item.sales}}</view>
+            <view class="price-row">
+              <text class="original-price">¥{{item.originalPrice}}</text>
+              <text class="current-price">¥{{item.price}}</text>
+            </view>
+            <view class="discount-info" wx:if="{{item.discountText}}">{{item.discountText}}</view>
+          </view>
+          <view class="add-btn" bindtap="addToCart" data-item="{{item}}">
+            <text>+</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="loading-more" wx:if="{{loading}}">
+        <text>加载中...</text>
+      </view>
+      
+      <view class="empty-products" wx:if="{{products.length === 0 && !loading}}">
+        <text>暂无商品</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="delivery-info">
+      <text class="robot-icon">🤖</text>
+      <view class="delivery-text">
+        <text>预估配送费¥0</text>
+        <text class="pack-fee">包装费¥1</text>
+      </view>
+    </view>
+    <view class="cart-preview" bindtap="goToCart">
+      <view class="cart-icon">
+        <text>🛒</text>
+        <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+      </view>
+      <view class="cart-info">
+        <text class="cart-price">¥{{cartTotal}}</text>
+      </view>
+    </view>
+  </view>
+</view>

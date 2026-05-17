@@ -1,0 +1,58 @@
+<view class="container">
+  <view class="login-header">
+    <image class="store-logo" src="{{logoUrl}}" mode="aspectFit"></image>
+    <text class="app-name">泽明果业</text>
+  </view>
+
+  <view class="login-content">
+    <view class="privacy-tip">
+      <text>泽明果业申请获得以下权限：</text>
+      <text class="privacy-detail">获取您的手机号，为您注册用户信息，登录小程序</text>
+    </view>
+
+    <button class="phone-login-btn" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">
+      手机号快捷登录
+    </button>
+
+    <view class="skip-btn" bindtap="skipLogin">暂不登录</view>
+  </view>
+
+  <view class="divider">
+    <text>其它登录方式</text>
+  </view>
+
+  <view class="sms-login">
+    <view class="sms-icon">✉️</view>
+    <text class="sms-label">短信验证登录</text>
+  </view>
+
+  <view class="agreement">
+    <text class="agreement-hint">登录即代表您已同意</text>
+    <text class="link" bindtap="viewPrivacy">《用户隐私协议》</text>
+    <text class="link" bindtap="viewAgreement">《用户服务条款》</text>
+  </view>
+</view>
+
+<view class="privacy-modal" wx:if="{{showPrivacyModal}}" catchtouchmove="preventMove">
+  <view class="privacy-mask" bindtap="closePrivacyModal"></view>
+  <view class="privacy-dialog">
+    <view class="privacy-title">隐私授权提示</view>
+    <view class="privacy-content">
+      <text class="privacy-text">您好，为了更好地为您提供服务，我们需要获取您的以下信息：</text>
+      <view class="privacy-list">
+        <text class="privacy-item">• 手机号码：用于账号登录和身份识别</text>
+        <text class="privacy-item">• 收货地址：用于商品配送服务</text>
+        <text class="privacy-item">• 定位信息：用于计算配送距离和范围</text>
+      </view>
+      <text class="privacy-text">我们将严格保护您的个人信息安全，不会泄露给第三方。</text>
+      <view class="privacy-policy-link">
+        <text>详细内容请阅读</text>
+        <text class="link" bindtap="viewPrivacyInModal">《用户隐私协议》</text>
+      </view>
+    </view>
+    <view class="privacy-buttons">
+      <button class="privacy-btn disagree" bindtap="disagreePrivacy">不同意</button>
+      <button class="privacy-btn agree" bindtap="agreePrivacy">同意并继续</button>
+    </view>
+  </view>
+</view>

@@ -18,12 +18,12 @@
     </view>
   </view>
 
-  <view class="notice-bar">
+  <view class="notice-bar address-bar">
     <text class="notice-icon">📍</text>
     <text class="notice-text">店铺地址：江苏省淮安市清江浦区济南路东冠逸景花苑 1 号楼 1-5.1-6 号 泽明果业</text>
   </view>
 
-  <view class="notice-bar">
+  <view class="notice-bar announcement-bar">
     <text class="notice-icon">📢</text>
     <swiper class="notice-swiper" vertical autoplay circular interval="3000">
       <swiper-item wx:for="{{notices}}" wx:key="index">

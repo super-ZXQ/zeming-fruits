@@ -2,12 +2,9 @@ App({
   globalData: {
     userInfo: null,
     token: null,
-    location: null,
     cart: [],
     memberLevel: 0,
     memberBalance: 0,
-    defaultAddress: null,
-    orders: [],
     shopSettings: null
   },
 
@@ -21,9 +18,12 @@ App({
     }
     
     this.loadCartFromStorage();
-    this.loadAddressFromStorage();
     this.checkLoginStatus();
     this.loadShopSettings();
+  },
+
+  onShow() {
+    this.updateCartBadge();
   },
 
   loadCartFromStorage() {
@@ -40,26 +40,6 @@ App({
       wx.setStorageSync('cart', this.globalData.cart);
     } catch (e) {
       console.log('保存购物车失败', e);
-    }
-  },
-
-  loadAddressFromStorage() {
-    try {
-      const address = wx.getStorageSync('defaultAddress');
-      if (address) {
-        this.globalData.defaultAddress = address;
-      }
-    } catch (e) {
-      console.log('加载地址失败', e);
-    }
-  },
-
-  saveAddressToStorage(address) {
-    try {
-      wx.setStorageSync('defaultAddress', address);
-      this.globalData.defaultAddress = address;
-    } catch (e) {
-      console.log('保存地址失败', e);
     }
   },
 

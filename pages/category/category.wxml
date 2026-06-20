@@ -12,7 +12,7 @@
   </view>
 
   <view class="right-content">
-    <scroll-view scroll-y class="product-scroll" bindscrolltolower="loadMore">
+    <scroll-view scroll-y class="product-scroll">
       <view class="product-list">
         <view class="product-card" wx:for="{{products}}" wx:key="id">
           <view class="product-image">
@@ -25,7 +25,7 @@
             <view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view>
             <view class="product-sales">月售{{item.sales}}</view>
             <view class="price-row">
-              <text class="original-price">¥{{item.originalPrice}}</text>
+              <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
               <text class="current-price">¥{{item.price}}</text>
             </view>
             <view class="discount-info" wx:if="{{item.discountText}}">{{item.discountText}}</view>

@@ -5,8 +5,6 @@ cloud.init({
 })
 
 exports.main = async (event, context) => {
-  const wxContext = cloud.getWXContext()
-  
   console.log('decryptPhone event:', event)
   
   if (!event.code) {
@@ -25,38 +23,6 @@ exports.main = async (event, context) => {
     
     if (result.errCode === 0 && result.phoneInfo) {
       const phoneInfo = result.phoneInfo
-      
-      const db = cloud.database()
-      const usersCollection = db.collection('users')
-      
-      const userRes = await usersCollection
-        .where({
-          _openid: wxContext.OPENID
-        })
-        .get()
-      
-      if (userRes.data.length > 0) {
-        await usersCollection.doc(userRes.data[0]._id).update({
-          data: {
-            phone: phoneInfo.phoneNumber,
-            purePhone: phoneInfo.purePhoneNumber,
-            countryCode: phoneInfo.countryCode,
-            phoneUpdatedAt: db.serverDate()
-          }
-        })
-      } else {
-        await usersCollection.add({
-          data: {
-            _openid: wxContext.OPENID,
-            phone: phoneInfo.phoneNumber,
-            purePhone: phoneInfo.purePhoneNumber,
-            countryCode: phoneInfo.countryCode,
-            phoneUpdatedAt: db.serverDate(),
-            createTime: db.serverDate()
-          }
-        })
-      }
-      
       return {
         success: true,
         data: {

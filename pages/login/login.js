@@ -89,37 +89,49 @@ Page({
       console.log('获取到手机号:', phoneNumber)
 
       const db = wx.cloud.database()
-      
-      // 使用手机号作为唯一标识查询用户
-      const userRes = await db.collection('users').doc(phoneNumber).get().catch(() => null)
+      const loginRes = await wx.cloud.callFunction({
+        name: 'userLogin'
+      })
+
+      if (!loginRes.result || !loginRes.result.success) {
+        throw new Error(loginRes.result?.error || '登录失败')
+      }
+
+      const loginUserInfo = loginRes.result.userInfo
+      let userRes = await db.collection('users').doc(phoneNumber).get().catch(() => null)
+
+      if (!userRes || !userRes.data) {
+        const openidRes = await db.collection('users')
+          .where({ _openid: loginUserInfo.openid })
+          .limit(1)
+          .get()
+        userRes = openidRes.data.length > 0 ? { data: openidRes.data[0] } : null
+      }
 
       let userInfo
       let isNewUser = false
 
       if (userRes && userRes.data) {
-        // 老用户，使用已有数据
         const userData = userRes.data
+        if (userData.phone !== phoneNumber) {
+          await db.collection('users').doc(userData._id).update({
+            data: {
+              phone: phoneNumber,
+              updatedAt: db.serverDate()
+            }
+          })
+        }
         userInfo = {
-          id: phoneNumber,
-          openid: userData._openid || '',
-          phone: userData.phone,
-          nickname: userData.nickname,
-          avatarUrl: userData.avatarUrl,
+          id: userData._id,
+          openid: userData._openid || loginUserInfo.openid,
+          phone: phoneNumber,
+          nickname: userData.nickname || userData.nickName || '微信用户',
+          avatarUrl: userData.avatarUrl || '',
           memberLevel: userData.memberLevel || 0,
           memberBalance: userData.memberBalance || 0
         }
         console.log('老用户登录:', userInfo)
       } else {
-        // 新用户，创建新记录（使用手机号作为_id）
-        const loginRes = await wx.cloud.callFunction({
-          name: 'userLogin'
-        })
-
-        if (!loginRes.result.success) {
-          throw new Error(loginRes.result.error || '登录失败')
-        }
-
-        const loginUserInfo = loginRes.result.userInfo
         userInfo = {
           id: phoneNumber,
           openid: loginUserInfo.openid,
@@ -130,11 +142,9 @@ Page({
           memberBalance: 0
         }
         
-        // 使用手机号作为 _id，确保每个手机号都是独立用户
         await db.collection('users').add({
           data: {
             _id: phoneNumber,
-            _openid: loginUserInfo.openid,
             phone: phoneNumber,
             nickname: loginUserInfo.nickName,
             avatarUrl: loginUserInfo.avatarUrl,

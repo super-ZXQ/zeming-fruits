@@ -4,7 +4,6 @@
     "pages/category/category",
     "pages/cart/cart",
     "pages/mine/mine",
-    "pages/checkout/checkout",
     "pages/orders/orders",
     "pages/orderDetail/orderDetail",
     "pages/address/address",
@@ -31,14 +30,14 @@
     "getLocation"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#43A047",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#185C3A",
     "navigationBarTitleText": "泽明果业",
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#43A047",
+    "color": "#8A958F",
+    "selectedColor": "#185C3A",
     "backgroundColor": "#ffffff",
     "list": [
       {

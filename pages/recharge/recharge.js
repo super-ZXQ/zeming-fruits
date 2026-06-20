@@ -116,51 +116,72 @@ Page({
           
           try {
             const db = wx.cloud.database();
-            
-            const userRes = await db.collection('users').doc(userInfo.id).get();
-            const currentBalance = userRes.data.memberBalance || 0;
-            const newBalance = currentBalance + totalAmount;
-            
-            await db.collection('users').doc(userInfo.id).update({
+
+            const orderRes = await db.collection('orders').add({
               data: {
-                memberBalance: newBalance
-              }
-            });
-            
-            await db.collection('recharge_records').add({
-              data: {
+                orderType: 'recharge',
                 userId: userInfo.id,
-                openid: userInfo.openid,
-                amount: rechargeAmount,
-                giveAmount: giveAmount,
-                totalAmount: totalAmount,
-                balanceBefore: currentBalance,
-                balanceAfter: newBalance,
+                goods: [],
+                recharge: {
+                  amount: rechargeAmount,
+                  giveAmount,
+                  creditAmount: totalAmount
+                },
+                priceDetail: {
+                  goodsTotal: rechargeAmount,
+                  couponDiscount: 0,
+                  deliveryFee: 0,
+                  total: rechargeAmount
+                },
+                status: 'pending',
                 createTime: db.serverDate()
               }
             });
-            
-            app.globalData.memberBalance = newBalance;
+
+            const payRes = await wx.cloud.callFunction({
+              name: 'payOrder',
+              data: {
+                orderId: orderRes._id
+              }
+            })
+
+            if (!payRes.result || !payRes.result.success) {
+              throw new Error(payRes.result?.error || '发起支付失败')
+            }
+
+            const payment = payRes.result.data
+            await new Promise((resolve, reject) => {
+              wx.requestPayment({
+                timeStamp: payment.timeStamp,
+                nonceStr: payment.nonceStr,
+                package: payment.package,
+                signType: payment.signType || 'MD5',
+                paySign: payment.paySign,
+                success: resolve,
+                fail: reject
+              })
+            })
             
             wx.hideLoading();
             wx.showToast({
-              title: giveAmount > 0 ? `充值成功！赠送¥${giveAmount}` : '充值成功！',
+              title: '支付成功，余额更新中',
               icon: 'success',
               duration: 2000
             });
 
             this.setData({
-              currentBalance: newBalance.toFixed(2),
               selectedPackage: -1,
               customAmount: 0,
               rechargeAmount: 0,
               loading: false
             });
+
+            setTimeout(() => this.loadMemberInfo(), 1500)
           } catch (err) {
             wx.hideLoading();
             console.error('充值失败:', err);
             wx.showToast({
-              title: '充值失败，请重试',
+              title: err.errMsg && err.errMsg.includes('cancel') ? '已取消支付' : '充值失败，请重试',
               icon: 'none'
             });
             this.setData({ loading: false });

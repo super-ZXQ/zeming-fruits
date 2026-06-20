@@ -127,6 +127,35 @@
       }
     },
 
+    "addresses": {
+      "description": "用户收货地址集合",
+      "schema": {
+        "_id": { "type": "string" },
+        "_openid": { "type": "string" },
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "doorNumber": { "type": "string" },
+        "contactName": { "type": "string" },
+        "phone": { "type": "string" },
+        "gender": { "type": "string" },
+        "tags": { "type": "array" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "isDefault": { "type": "boolean", "default": false },
+        "createdAt": { "type": "date" },
+        "updatedAt": { "type": "date" }
+      },
+      "indexes": [
+        {
+          "keys": { "_openid": 1, "createdAt": -1 }
+        }
+      ],
+      "rules": {
+        "read": "doc._openid == auth.openid",
+        "write": "doc._openid == auth.openid"
+      }
+    },
+
     "products": {
       "description": "商品信息集合",
       "schema": {
@@ -237,6 +266,16 @@
           "description": "订单编号",
           "example": "ZM202603160001"
         },
+        "orderType": {
+          "type": "string",
+          "description": "订单类型",
+          "enum": ["goods", "recharge"],
+          "default": "goods"
+        },
+        "userId": {
+          "type": "string",
+          "description": "关联用户文档ID"
+        },
         "goods": {
           "type": "array",
           "description": "商品列表",
@@ -249,6 +288,15 @@
               "quantity": { "type": "number" },
               "emoji": { "type": "string" }
             }
+          }
+        },
+        "recharge": {
+          "type": "object",
+          "description": "充值订单信息",
+          "properties": {
+            "amount": { "type": "number" },
+            "giveAmount": { "type": "number" },
+            "creditAmount": { "type": "number" }
           }
         },
         "deliveryType": {
@@ -302,7 +350,7 @@
         "status": {
           "type": "string",
           "description": "订单状态",
-          "enum": ["pending", "paid", "preparing", "delivering", "completed", "cancelled"],
+          "enum": ["pending", "pending_payment", "paid", "preparing", "delivering", "completed", "cancelled", "refund"],
           "default": "pending"
         },
         "paidAt": {

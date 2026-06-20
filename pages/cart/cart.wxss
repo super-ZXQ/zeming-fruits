@@ -1,25 +1,30 @@
+.container {
+  min-height: 100vh;
+  background: #f3f6f1;
+}
+
 .header {
-  background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
-  padding: 32rpx;
   display: flex;
+  align-items: flex-end;
   justify-content: space-between;
-  align-items: center;
+  padding: 30rpx 28rpx 18rpx;
 }
 
 .header .title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #fff;
+  color: #203129;
+  font-size: 38rpx;
+  font-weight: 800;
 }
 
 .header .count {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.85);
+  padding-bottom: 5rpx;
+  color: #87918c;
+  font-size: 23rpx;
 }
 
 .content {
-  height: calc(100vh - 260rpx);
-  padding: 20rpx;
+  height: calc(100vh - 236rpx);
+  padding: 0 24rpx 20rpx;
 }
 
 .cart-list {
@@ -27,200 +32,227 @@
 }
 
 .cart-item {
+  position: relative;
   display: flex;
   align-items: center;
-  background-color: #fff;
-  padding: 24rpx;
-  border-radius: 16rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 16rpx;
+  padding: 20rpx;
+  border: 1rpx solid #e8ece6;
+  border-radius: 24rpx;
+  background: #fff;
+  box-shadow: 0 8rpx 22rpx rgba(35, 61, 47, 0.05);
 }
 
 .checkbox {
-  width: 44rpx;
-  height: 44rpx;
-  border: 2rpx solid #ddd;
-  border-radius: 50%;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  width: 42rpx;
+  height: 42rpx;
   margin-right: 16rpx;
+  border: 2rpx solid #cbd2cd;
+  border-radius: 50%;
+  background: #fff;
 }
 
 .checkbox.checked {
-  background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
-  border-color: #43A047;
+  border-color: #185c3a;
+  background: #185c3a;
 }
 
 .checkbox text {
-  font-size: 24rpx;
   color: #fff;
+  font-size: 23rpx;
 }
 
 .item-img {
-  width: 140rpx;
-  height: 140rpx;
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  border-radius: 12rpx;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  margin-right: 20rpx;
+  width: 138rpx;
+  height: 138rpx;
+  margin-right: 18rpx;
   overflow: hidden;
+  border-radius: 18rpx;
+  background: #f1f5ef;
 }
 
 .product-image {
   width: 100%;
   height: 100%;
-  border-radius: 12rpx;
 }
 
 .fruit-icon {
-  font-size: 70rpx;
+  font-size: 66rpx;
 }
 
 .item-info {
-  flex: 1;
   display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 132rpx;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .item-info .name {
-  font-size: 28rpx;
-  font-weight: 500;
-  color: #333;
+  display: -webkit-box;
+  overflow: hidden;
+  padding-right: 36rpx;
+  color: #293a31;
+  font-size: 27rpx;
+  font-weight: 700;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .bottom {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 16rpx;
+  justify-content: space-between;
+  margin-top: 14rpx;
 }
 
 .bottom .price {
-  color: #e53935;
-  font-size: 30rpx;
-  font-weight: 600;
-}
-
-.bottom .price::before {
-  content: '¥';
-  font-size: 22rpx;
+  color: #c94236;
+  font-size: 31rpx;
+  font-weight: 800;
 }
 
 .quantity {
   display: flex;
   align-items: center;
-  background-color: #f5f9f5;
-  border-radius: 12rpx;
+  overflow: hidden;
+  border: 1rpx solid #e1e6e0;
+  border-radius: 14rpx;
+  background: #f7f9f6;
 }
 
 .quantity .btn {
-  width: 56rpx;
-  height: 56rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  color: #666;
+  width: 52rpx;
+  height: 50rpx;
+  color: #4e5b54;
+  font-size: 30rpx;
 }
 
 .quantity .num {
-  min-width: 60rpx;
+  min-width: 48rpx;
+  color: #26362e;
+  font-size: 25rpx;
   text-align: center;
-  font-size: 28rpx;
 }
 
 .delete {
-  font-size: 40rpx;
-  color: #999;
-  padding: 20rpx;
+  position: absolute;
+  top: 8rpx;
+  right: 10rpx;
+  padding: 12rpx;
+  color: #aab1ad;
+  font-size: 34rpx;
 }
 
 .empty {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding-top: 200rpx;
+  padding-top: 180rpx;
+  flex-direction: column;
 }
 
 .empty-icon {
-  font-size: 160rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: #e7eee8;
+  font-size: 86rpx;
+  opacity: 0.8;
 }
 
 .empty-text {
-  font-size: 28rpx;
-  color: #999;
   margin-top: 30rpx;
+  color: #66736c;
+  font-size: 28rpx;
+  font-weight: 600;
 }
 
 .go-btn {
-  margin-top: 40rpx;
-  padding: 22rpx 80rpx;
-  background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+  margin-top: 32rpx;
+  padding: 20rpx 68rpx;
+  border-radius: 40rpx;
+  background: #185c3a;
   color: #fff;
-  border-radius: 44rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
 }
 
 .footer {
   position: fixed;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  height: 120rpx;
-  background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30rpx;
-  box-shadow: 0 -4rpx 24rpx rgba(0, 0, 0, 0.08);
+  min-height: 118rpx;
+  padding: 14rpx 24rpx;
+  border-top: 1rpx solid #e7ebe5;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 -8rpx 24rpx rgba(35, 61, 47, 0.07);
 }
 
-.select-all {
-  display: flex;
-  align-items: center;
-}
-
-.select-all .checkbox {
-  margin-right: 12rpx;
-}
-
-.select-all text {
-  font-size: 26rpx;
-}
-
+.select-all,
 .right {
   display: flex;
   align-items: center;
 }
 
+.select-all .checkbox {
+  margin-right: 10rpx;
+}
+
+.select-all text {
+  color: #45534b;
+  font-size: 25rpx;
+}
+
 .total {
-  margin-right: 32rpx;
+  margin-right: 20rpx;
   text-align: right;
 }
 
 .total text:first-child {
-  font-size: 26rpx;
-  color: #666;
+  color: #748078;
+  font-size: 22rpx;
 }
 
 .total .price {
-  font-size: 36rpx;
-  color: #e53935;
-  font-weight: 600;
+  color: #c94236;
+  font-size: 34rpx;
+  font-weight: 800;
 }
 
 .checkout-btn {
-  padding: 22rpx 52rpx;
-  background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
+  padding: 21rpx 34rpx;
+  border-radius: 42rpx;
+  background: #185c3a;
   color: #fff;
-  border-radius: 44rpx;
-  font-size: 28rpx;
+  font-size: 26rpx;
+  font-weight: 600;
 }
 
 .checkout-btn.disabled {
-  background: #bdbdbd;
+  background: #c6cec8;
+}
+
+.go-btn:active,
+.checkout-btn:active,
+.quantity .btn:active {
+  opacity: 0.76;
 }

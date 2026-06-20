@@ -48,8 +48,11 @@ Page({
       
       if (res.data && res.data.length > 0) {
         let filteredProducts = res.data;
+        const categoryProducts = res.data.filter(p => p.category === categoryId);
         
-        if (categoryId === 'berry') {
+        if (categoryProducts.length > 0) {
+          filteredProducts = categoryProducts;
+        } else if (categoryId === 'berry') {
           filteredProducts = res.data.filter(p => 
             (p.name && (p.name.includes('草莓') || p.name.includes('樱桃') || p.name.includes('车厘子'))) ||
             (p.emoji && (p.emoji === '🍓' || p.emoji === '🍒'))
@@ -188,17 +191,5 @@ Page({
     wx.switchTab({
       url: '/pages/cart/cart'
     });
-  },
-
-  loadMore() {
-    this.setData({ loading: true });
-    
-    setTimeout(() => {
-      this.setData({ loading: false });
-      wx.showToast({
-        title: '没有更多了',
-        icon: 'none'
-      });
-    }, 1000);
   }
 });

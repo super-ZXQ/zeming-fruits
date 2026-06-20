@@ -9,7 +9,7 @@
 
   <scroll-view scroll-y class="address-list">
     <view class="address-card {{item.isDefault ? 'default' : ''}}" wx:for="{{addresses}}" wx:key="id">
-      <view class="card-top" bindtap="selectAddress" data-id="{{item.id}}">
+      <view class="card-top">
         <view class="user-info">
           <text class="name">{{item.name}}</text>
           <text class="phone">{{item.phone}}</text>
@@ -48,56 +48,4 @@
     </view>
   </scroll-view>
 
-  <view class="modal" wx:if="{{showModal}}">
-    <view class="modal-mask" bindtap="closeModal"></view>
-    <view class="modal-content">
-      <view class="modal-header">
-        <text class="modal-title">{{isEdit ? '编辑地址' : '新增地址'}}</text>
-        <text class="modal-close" bindtap="closeModal">×</text>
-      </view>
-      
-      <view class="form">
-        <view class="form-item">
-          <text class="label">收货人</text>
-          <input class="input" placeholder="请输入收货人姓名" value="{{formData.name}}" bindinput="inputName"/>
-        </view>
-        
-        <view class="form-item">
-          <text class="label">手机号</text>
-          <input class="input" type="number" maxlength="11" placeholder="请输入手机号" value="{{formData.phone}}" bindinput="inputPhone"/>
-        </view>
-        
-        <view class="form-item">
-          <text class="label">省份</text>
-          <picker mode="region" bindchange="bindRegionChange" value="{{region}}">
-            <view class="picker">
-              {{region[0] && region[1] && region[2] ? region[0] + ' ' + region[1] + ' ' + region[2] : '请选择省/市/区'}}
-            </view>
-          </picker>
-        </view>
-        
-        <view class="form-item">
-          <text class="label">定位</text>
-          <view class="location-btn" bindtap="getLocation">
-            <text>📍 点击定位自动填写地址</text>
-          </view>
-        </view>
-        
-        <view class="form-item">
-          <text class="label">详细地址</text>
-          <textarea class="textarea" placeholder="请输入详细地址" value="{{formData.detail}}" bindinput="inputDetail"></textarea>
-        </view>
-        
-        <view class="form-item">
-          <text class="label">设为默认</text>
-          <switch checked="{{formData.isDefault}}" bindchange="bindDefaultChange" color="#43A047"/>
-        </view>
-      </view>
-      
-      <view class="modal-footer">
-        <button class="btn-cancel" bindtap="closeModal">取消</button>
-        <button class="btn-save" bindtap="saveAddress">保存</button>
-      </view>
-    </view>
-  </view>
 </view>

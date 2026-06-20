@@ -1,5 +1,3 @@
-const app = getApp();
-
 Page({
   data: {
     currentStatus: 'all',
@@ -8,67 +6,94 @@ Page({
     statusText: {
       pending: '待付款',
       paid: '进行中',
-      completed: '已完成'
+      completed: '已完成',
+      refund: '售后中',
+      cancelled: '已取消'
     }
   },
 
   onLoad(options) {
-    const status = options.status || 'all';
-    this.setData({ currentStatus: status });
-    this.loadOrders();
+    this.setData({ currentStatus: options.status || 'all' })
   },
 
   onShow() {
-    this.loadOrders();
+    this.loadOrders()
   },
 
-  loadOrders() {
-    const orders = app.globalData && app.globalData.orders ? app.globalData.orders : [];
-    const currentStatus = this.data.currentStatus;
-    
-    let filtered = [];
-    if (currentStatus === 'all') {
-      filtered = orders;
-    } else {
-      filtered = orders.filter(order => order.status === currentStatus);
+  async loadOrders() {
+    try {
+      const db = wx.cloud.database()
+      const res = await db.collection('orders')
+        .orderBy('createTime', 'desc')
+        .limit(50)
+        .get()
+
+      const allOrders = res.data
+        .filter(order => order.orderType !== 'recharge')
+        .map(order => this.normalizeOrder(order))
+      const currentStatus = this.data.currentStatus
+      const orders = currentStatus === 'all'
+        ? allOrders
+        : allOrders.filter(order => order.status === currentStatus)
+
+      this.setData({
+        orders,
+        pendingCount: allOrders.filter(order => order.status === 'pending').length
+      })
+    } catch (err) {
+      console.error('加载订单失败:', err)
+      wx.showToast({ title: '订单加载失败', icon: 'none' })
     }
-
-    filtered = filtered.map(order => ({
-      ...order,
-      createTime: this.formatTime(order.createTime)
-    }));
-
-    const pendingCount = orders.filter(o => o.status === 'pending').length;
-    
-    this.setData({ orders: filtered, pendingCount });
   },
 
-  formatTime(isoString) {
-    if (!isoString) return '';
-    const date = new Date(isoString);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hour = String(date.getHours()).padStart(2, '0');
-    const minute = String(date.getMinutes()).padStart(2, '0');
-    return `${month}-${day} ${hour}:${minute}`;
+  normalizeOrder(order) {
+    const statusMap = {
+      pending_payment: 'pending',
+      preparing: 'paid',
+      delivering: 'paid'
+    }
+    const status = statusMap[order.status] || order.status
+    const priceDetail = order.priceDetail || {}
+    const totalAmount = priceDetail.total !== undefined
+      ? priceDetail.total
+      : (order.finalAmount !== undefined ? order.finalAmount : (order.totalAmount || 0))
+
+    return {
+      ...order,
+      id: order._id || order.id,
+      status,
+      items: (order.goods || order.items || []).map(item => ({
+        ...item,
+        count: item.quantity || item.count || 1
+      })),
+      totalAmount,
+      createTime: this.formatTime(order.createTime)
+    }
+  },
+
+  formatTime(value) {
+    if (!value) return ''
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return ''
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hour = String(date.getHours()).padStart(2, '0')
+    const minute = String(date.getMinutes()).padStart(2, '0')
+    return `${month}-${day} ${hour}:${minute}`
   },
 
   switchTab(e) {
-    const status = e.currentTarget.dataset.status;
-    this.setData({ currentStatus: status });
-    this.loadOrders();
+    this.setData({ currentStatus: e.currentTarget.dataset.status })
+    this.loadOrders()
   },
 
   goToDetail(e) {
-    const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: '/pages/orderDetail/orderDetail?id=' + id
-    });
+      url: '/pages/orderDetail/orderDetail?id=' + e.currentTarget.dataset.id
+    })
   },
 
   goShopping() {
-    wx.switchTab({
-      url: '/pages/index/index'
-    });
+    wx.switchTab({ url: '/pages/index/index' })
   }
-});
+})

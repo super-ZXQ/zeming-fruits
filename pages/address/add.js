@@ -275,6 +275,8 @@ Page({
           data: addressData
         })
       } else {
+        const countRes = await db.collection('addresses').count()
+        addressData.isDefault = countRes.total === 0
         addressData.createdAt = db.serverDate()
         await db.collection('addresses').add({ data: addressData })
       }

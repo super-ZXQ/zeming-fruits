@@ -35,6 +35,13 @@ Page({
     });
   },
 
+  saveCart: function() {
+    var app = getApp();
+    app.saveCartToStorage();
+    app.updateCartBadge();
+    this.loadCart();
+  },
+
   toggleSelect: function(e) {
     var id = e.currentTarget.dataset.id;
     var app = getApp();
@@ -45,7 +52,7 @@ Page({
         break;
       }
     }
-    this.loadCart();
+    this.saveCart();
   },
 
   toggleSelectAll: function() {
@@ -55,7 +62,7 @@ Page({
     for (var i = 0; i < cart.length; i++) {
       cart[i].selected = allSelected;
     }
-    this.loadCart();
+    this.saveCart();
   },
 
   increaseCount: function(e) {
@@ -68,7 +75,7 @@ Page({
         break;
       }
     }
-    this.loadCart();
+    this.saveCart();
   },
 
   decreaseCount: function(e) {
@@ -83,7 +90,7 @@ Page({
         break;
       }
     }
-    this.loadCart();
+    this.saveCart();
   },
 
   deleteItem: function(e) {
@@ -102,7 +109,7 @@ Page({
               break;
             }
           }
-          this$1.loadCart();
+          this$1.saveCart();
         }
       }
     });

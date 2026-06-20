@@ -1,6 +1,12 @@
+.container {
+  min-height: 100vh;
+  padding-bottom: 36rpx;
+  background: #f3f6f1;
+}
+
 .header {
-  background: linear-gradient(135deg, #66BB6A 0%, #43A047 100%);
-  padding: 40rpx 30rpx 100rpx;
+  padding: 42rpx 30rpx 108rpx;
+  background: linear-gradient(145deg, #185c3a 0%, #277a4d 100%);
 }
 
 .user-info {
@@ -9,84 +15,82 @@
 }
 
 .avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 50%;
-  border: 4rpx solid #fff;
-  background-color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 116rpx;
+  height: 116rpx;
+  overflow: hidden;
+  border: 5rpx solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 10rpx 24rpx rgba(0, 0, 0, 0.12);
 }
 
 .avatar text {
-  font-size: 56rpx;
+  color: #294036;
+  font-size: 52rpx;
 }
 
-.user-detail {
+.user-detail,
+.login-tip {
   flex: 1;
-  margin-left: 24rpx;
+  margin-left: 22rpx;
 }
 
-.nickname {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #fff;
+.nickname,
+.login-text {
   display: block;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
 }
 
 .member-badge {
   display: inline-flex;
   align-items: center;
-  margin-top: 12rpx;
-  padding: 8rpx 20rpx;
-  border-radius: 24rpx;
-  font-size: 22rpx;
+  margin-top: 10rpx;
+  padding: 7rpx 17rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.28);
+  border-radius: 22rpx;
   color: #fff;
-}
-
-.login-tip {
-  flex: 1;
-  margin-left: 24rpx;
-}
-
-.login-text {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #fff;
-  display: block;
+  font-size: 20rpx;
 }
 
 .sub-text {
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.8);
   display: block;
-  margin-top: 10rpx;
+  margin-top: 8rpx;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 21rpx;
 }
 
 .arrow {
-  font-size: 36rpx;
-  opacity: 0.6;
+  color: currentColor;
+  font-size: 31rpx;
+  opacity: 0.48;
 }
 
 .member-card {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-  margin-top: 30rpx;
-  padding: 28rpx;
-  border-radius: 20rpx;
+  justify-content: space-between;
+  margin-top: 28rpx;
+  padding: 26rpx 28rpx;
+  border: 1rpx solid rgba(255, 229, 166, 0.36);
+  border-radius: 24rpx;
+  background: linear-gradient(135deg, #253c32 0%, #142a21 100%);
+  box-shadow: 0 12rpx 28rpx rgba(10, 37, 25, 0.2);
 }
 
-.member-left {
+.member-left,
+.member-right {
   display: flex;
   align-items: center;
 }
 
 .vip-icon {
-  font-size: 52rpx;
-  margin-right: 16rpx;
+  margin-right: 15rpx;
+  font-size: 46rpx;
 }
 
 .member-info {
@@ -95,48 +99,52 @@
 }
 
 .member-title {
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 240, 204, 0.72);
+  font-size: 20rpx;
 }
 
 .member-balance {
-  font-size: 40rpx;
-  font-weight: 600;
-  color: #fff;
+  color: #ffe2a3;
+  font-size: 39rpx;
+  font-weight: 700;
 }
 
 .member-right {
-  display: flex;
-  align-items: center;
-  color: #fff;
-  font-size: 24rpx;
+  color: #f7dfac;
+  font-size: 23rpx;
+}
+
+.order-section,
+.menu-section {
+  border: 1rpx solid #e8ece6;
+  border-radius: 24rpx;
+  background: #fff;
+  box-shadow: 0 8rpx 24rpx rgba(35, 61, 47, 0.06);
 }
 
 .order-section {
-  background-color: #fff;
-  margin: -60rpx 30rpx 20rpx;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);
+  margin: -62rpx 24rpx 18rpx;
+  padding: 28rpx 26rpx;
 }
 
 .section-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30rpx;
+  justify-content: space-between;
+  margin-bottom: 28rpx;
 }
 
 .section-title {
-  font-size: 30rpx;
-  font-weight: 600;
+  color: #24362d;
+  font-size: 29rpx;
+  font-weight: 800;
 }
 
 .view-all {
   display: flex;
   align-items: center;
-  font-size: 24rpx;
-  color: #999;
+  color: #8b958f;
+  font-size: 22rpx;
 }
 
 .order-tabs {
@@ -146,75 +154,96 @@
 
 .order-tab {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  min-width: 104rpx;
+  flex-direction: column;
 }
 
 .tab-icon {
-  font-size: 52rpx;
-  margin-bottom: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72rpx;
+  height: 72rpx;
+  margin-bottom: 10rpx;
+  border-radius: 22rpx;
+  background: #f0f5ef;
+  font-size: 36rpx;
 }
 
 .order-tab text {
-  font-size: 24rpx;
-  color: #666;
+  color: #65716b;
+  font-size: 22rpx;
 }
 
 .menu-section {
-  background-color: #fff;
-  margin: 0 30rpx 20rpx;
-  border-radius: 20rpx;
-  padding: 0 24rpx;
-  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);
+  margin: 0 24rpx 18rpx;
+  padding: 0 22rpx;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 28rpx 12rpx;
-  border-bottom: 1rpx solid #f5f5f5;
+  min-height: 94rpx;
+  padding: 0 8rpx;
+  border-bottom: 1rpx solid #edf0eb;
 }
 
 .menu-item:last-child {
   border-bottom: none;
 }
 
-.admin-entry {
-  background: linear-gradient(135deg, #fff8e1 0%, #fffde7 100%);
-  margin: 0 -24rpx;
-  padding: 28rpx 36rpx;
-  border-radius: 0 0 20rpx 20rpx;
-}
-
-.admin-badge {
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-  color: #fff;
-  font-size: 20rpx;
-  padding: 4rpx 12rpx;
-  border-radius: 8rpx;
-  margin-right: 12rpx;
-}
-
 .menu-icon {
-  font-size: 36rpx;
-  margin-right: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56rpx;
+  height: 56rpx;
+  margin-right: 16rpx;
+  border-radius: 17rpx;
+  background: #f0f5ef;
+  font-size: 28rpx;
 }
 
 .menu-item text:first-of-type {
   flex: 1;
-  font-size: 28rpx;
-  color: #333;
+  color: #304139;
+  font-size: 26rpx;
+}
+
+.admin-entry {
+  margin: 0 -22rpx;
+  padding: 0 30rpx;
+  border-radius: 0 0 24rpx 24rpx;
+  background: #fff9e9;
+}
+
+.admin-badge {
+  margin-right: 10rpx;
+  padding: 4rpx 10rpx;
+  border-radius: 7rpx;
+  background: #9a681d;
+  color: #fff;
+  font-size: 18rpx;
 }
 
 .logout-section {
-  margin: 40rpx 30rpx;
+  margin: 28rpx 24rpx;
 }
 
 .logout-btn {
-  background-color: #fff;
-  color: #e53935;
+  padding: 24rpx;
+  border: 1rpx solid #eedfdb;
+  border-radius: 22rpx;
+  background: #fff;
+  color: #b94c42;
+  font-size: 26rpx;
   text-align: center;
-  padding: 26rpx;
-  border-radius: 20rpx;
-  font-size: 28rpx;
+}
+
+.member-card:active,
+.order-tab:active,
+.menu-item:active,
+.logout-btn:active {
+  opacity: 0.76;
 }

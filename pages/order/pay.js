@@ -34,50 +34,56 @@ Page({
     showPrivacyModal: false,
     outOfStockOption: 'call',
     goodsCount: 0,
-    pickupDistance: ''
+    pickupDistance: '',
+    pendingOrderId: ''
   },
 
   onLoad(options) {
     this.initGoods()
     this.initScheduleDate()
     this.loadUserInfo()
+    this.loadDefaultAddress()
     this.calculatePrice()
   },
 
   onShow() {
     this.initGoods()
+    this.loadDefaultAddress()
     this.calculatePrice()
   },
 
-  addTestGoods() {
-    const testGoods = [
-      { id: 'test1', name: '新鲜苹果', price: 9.9, emoji: '🍎', quantity: 2 },
-      { id: 'test2', name: '香蕉', price: 5.5, emoji: '🍌', quantity: 1 }
-    ]
-    this.setData({ goods: testGoods })
-    this.calculatePrice()
-    wx.showToast({ title: '已添加测试商品', icon: 'none' })
+  async loadDefaultAddress() {
+    if (this.data.address) return
+
+    try {
+      const res = await wx.cloud.database().collection('addresses')
+        .orderBy('createdAt', 'desc')
+        .get()
+      if (!res.data.length) return
+
+      const saved = res.data.find(item => item.isDefault) || res.data[0]
+      this.setData({
+        address: {
+          userName: saved.contactName,
+          telNumber: saved.phone,
+          provinceName: '',
+          cityName: '',
+          countyName: '',
+          detailInfo: `${saved.address || ''}${saved.doorNumber || ''}`
+        }
+      })
+      this.checkCanPay()
+    } catch (err) {
+      console.error('加载默认地址失败:', err)
+    }
   },
 
   async loadUserInfo() {
-    try {
-      const db = wx.cloud.database()
-      const res = await db.collection('users')
-        .where({
-          _openid: '{openid}'
-        })
-        .get()
-      
-      if (res.data && res.data.length > 0) {
-        const user = res.data[0]
-        this.setData({
-          userInfo: user,
-          hasPhone: !!user.phone
-        })
-      }
-    } catch (err) {
-      console.error('加载用户信息失败:', err)
-    }
+    const user = app.globalData.userInfo
+    this.setData({
+      userInfo: user,
+      hasPhone: !!(user && user.phone)
+    })
   },
 
   initGoods() {
@@ -106,9 +112,12 @@ Page({
     return `${year}-${month}-${day}`
   },
 
-  selectDeliveryType(e) {
+  async selectDeliveryType(e) {
     const type = e.currentTarget.dataset.type
     this.setData({ deliveryType: type })
+    if (type === 'delivery' && this.data.address) {
+      await this.checkDeliveryRange()
+    }
     this.calculatePrice()
     this.checkCanPay()
   },
@@ -200,14 +209,13 @@ Page({
   async saveUserAddress(address) {
     try {
       const db = wx.cloud.database()
-      const userRes = await db.collection('users')
-        .where({
-          _openid: '{openid}'
-        })
-        .get()
+      const userId = app.globalData.userInfo && app.globalData.userInfo.id
+      if (!userId) return
+
+      const userRes = await db.collection('users').doc(userId).get()
       
-      if (userRes.data && userRes.data.length > 0) {
-        const user = userRes.data[0]
+      if (userRes.data) {
+        const user = userRes.data
         const addresses = user.addresses || []
         
         const newAddress = {
@@ -261,13 +269,16 @@ Page({
           console.log('地理编码结果:', location)
         } catch (geoErr) {
           console.error('地理编码失败:', geoErr)
-          
-          location = {
-            latitude: 33.588399,
-            longitude: 119.073823,
-            isDefault: true
-          }
-          console.log('使用默认店铺位置进行计算')
+          this.setData({
+            canDeliver: false,
+            deliveryInfo: null
+          })
+          wx.showToast({
+            title: '地址无法定位，请重新选择',
+            icon: 'none'
+          })
+          this.calculatePrice()
+          return
         }
       }
       
@@ -320,7 +331,13 @@ Page({
     
     let deliveryFee = 0
     if (deliveryType === 'delivery' && deliveryInfo) {
-      deliveryFee = deliveryInfo.deliveryFee || 5
+      deliveryFee = typeof deliveryInfo.deliveryFee === 'number'
+        ? deliveryInfo.deliveryFee
+        : 5
+      const threshold = Number(app.globalData.shopSettings?.freeDeliveryThreshold) || 39
+      if (goodsTotal >= threshold) {
+        deliveryFee = 0
+      }
     }
     
     let total = goodsTotal - couponDiscount + deliveryFee
@@ -339,7 +356,8 @@ Page({
         total: parseFloat(total.toFixed(2))
       }
     })
-    
+
+    await this.loadAvailableCoupons(goodsTotal)
     this.checkCanPay()
   },
 
@@ -353,7 +371,15 @@ Page({
         })
         .get()
       
-      const availableCoupons = res.data.map(coupon => {
+      const today = new Date().toISOString().split('T')[0]
+      const availableCoupons = res.data
+        .filter(coupon => {
+          const inDateRange = (!coupon.validFrom || coupon.validFrom <= today) &&
+            (!coupon.validTo || coupon.validTo >= today)
+          const hasStock = !coupon.stock || (coupon.usedCount || 0) < coupon.stock
+          return inDateRange && hasStock
+        })
+        .map(coupon => {
         let calculatedDiscount = 0
         if (goodsTotal >= coupon.threshold) {
           if (coupon.discountType === 'cash') {
@@ -364,6 +390,7 @@ Page({
         }
         return {
           ...coupon,
+          id: coupon._id,
           calculatedDiscount: parseFloat(calculatedDiscount.toFixed(2))
         }
       })
@@ -494,9 +521,23 @@ Page({
       wx.hideLoading()
       
       if (res.result && res.result.success) {
+        const phone = res.result.data.phoneNumber
+        const userId = app.globalData.userInfo && app.globalData.userInfo.id
+        if (userId) {
+          await wx.cloud.database().collection('users').doc(userId).update({
+            data: {
+              phone,
+              updatedAt: wx.cloud.database().serverDate()
+            }
+          })
+        }
+        if (app.globalData.userInfo) {
+          app.globalData.userInfo.phone = phone
+          wx.setStorageSync('userInfo', app.globalData.userInfo)
+        }
         this.setData({
           hasPhone: true,
-          'userInfo.phone': res.result.data.phoneNumber
+          'userInfo.phone': phone
         })
         wx.showToast({ title: '绑定成功', icon: 'success' })
       } else {
@@ -510,6 +551,8 @@ Page({
   },
 
   async submitOrder() {
+    if (!this.data.canSubmit) return
+
     if (!this.data.canPay) {
       if (!this.data.agreedTerms) {
         wx.showToast({ title: '请先同意服务协议', icon: 'none' })
@@ -537,10 +580,21 @@ Page({
     wx.showLoading({ title: '提交中...', mask: true })
     
     try {
+      if (this.data.pendingOrderId) {
+        wx.hideLoading()
+        const paySuccess = await this.createPayment(this.data.pendingOrderId)
+        if (!paySuccess) {
+          this.setData({ canSubmit: true })
+        }
+        return
+      }
+
       const db = wx.cloud.database()
       const ordersCollection = db.collection('orders')
       
       const orderData = {
+        orderType: 'goods',
+        userId: app.globalData.userInfo && app.globalData.userInfo.id,
         goods: goods.map(item => ({
           id: item.id,
           name: item.name,
@@ -574,22 +628,11 @@ Page({
       }
       
       const result = await ordersCollection.add({ data: orderData })
+      this.setData({ pendingOrderId: result._id })
       
       wx.hideLoading()
       
-      if (selectedCoupon) {
-        await db.collection('coupons').doc(selectedCoupon.id).update({
-          data: {
-            usedCount: db.command.inc(1)
-          }
-        })
-      }
-      
-      const cart = app.globalData.cart.filter(item => !item.selected)
-      app.globalData.cart = cart
-      wx.setStorageSync('cart', cart)
-      
-      const paySuccess = await this.createPayment(result._id, priceDetail.total)
+      const paySuccess = await this.createPayment(result._id)
       
       if (!paySuccess) {
         this.setData({ canSubmit: true })
@@ -606,51 +649,17 @@ Page({
     }
   },
 
-  async updateUserAfterOrder(totalAmount) {
-    try {
-      const db = wx.cloud.database()
-      const userRes = await db.collection('users')
-        .where({
-          _openid: '{openid}'
-        })
-        .get()
-      
-      if (userRes.data && userRes.data.length > 0) {
-        const user = userRes.data[0]
-        const updateData = {
-          totalSpent: db.command.inc(totalAmount),
-          orderCount: db.command.inc(1),
-          lastOrderAt: db.serverDate(),
-          updatedAt: db.serverDate()
-        }
-        
-        if (!user.firstOrderAt) {
-          updateData.firstOrderAt = db.serverDate()
-        }
-        
-        await db.collection('users').doc(user._id).update({
-          data: updateData
-        })
-      }
-    } catch (err) {
-      console.error('更新用户订单信息失败:', err)
-    }
-  },
-
-  async createPayment(orderId, totalAmount) {
+  async createPayment(orderId) {
     wx.showLoading({ title: '正在发起支付...', mask: true })
     
     try {
       console.log('========== 开始支付流程 ==========')
       console.log('订单 ID:', orderId)
-      console.log('订单金额 (元):', totalAmount)
-      console.log('订单金额 (分):', Math.round(totalAmount * 100))
       
       const res = await wx.cloud.callFunction({
         name: 'payOrder',
         data: {
-          orderId: orderId,
-          totalAmount: totalAmount
+          orderId: orderId
         }
       })
       
@@ -755,19 +764,11 @@ Page({
 
   async onPaymentSuccess(orderId) {
     try {
-      const db = wx.cloud.database()
-      
-      await db.collection('orders').doc(orderId).update({
-        data: {
-          status: 'paid',
-          paidAt: db.serverDate()
-        }
-      })
-      
-      const orderRes = await db.collection('orders').doc(orderId).get()
-      const order = orderRes.data
-      
-      await this.updateUserAfterOrder(order.priceDetail.total)
+      const cart = app.globalData.cart.filter(item => !item.selected)
+      app.globalData.cart = cart
+      app.saveCartToStorage()
+      app.updateCartBadge()
+      this.setData({ pendingOrderId: '' })
       
       wx.showToast({ title: '支付成功', icon: 'success' })
       

@@ -32,9 +32,7 @@ Page({
   countdownTimer: null,
 
   onLoad() {
-    this.loadNotices();
     this.startCountdown();
-    this.loadProducts();
   },
 
   onShow() {
@@ -217,7 +215,7 @@ Page({
     const item = e.currentTarget.dataset.item;
 
     app.addToCart({
-      id: 'seckill_' + item.id,
+      id: item.id,
       name: item.name,
       price: item.price,
       emoji: item.emoji,

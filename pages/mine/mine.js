@@ -15,32 +15,6 @@ Page({
     if (app.updateCartBadge) {
       app.updateCartBadge()
     }
-    
-    const isAdmin = wx.getStorageSync('isAdmin')
-    const userPhone = wx.getStorageSync('userPhone')
-    console.log('=== 管理员页面诊断 ===')
-    console.log('isAdmin:', isAdmin)
-    console.log('userPhone:', userPhone)
-    console.log('isLoggedIn:', this.data.isLoggedIn)
-    console.log('========================')
-    
-    // 如果是管理员但没有显示，强制刷新
-    if (userPhone && !isAdmin) {
-      console.log('检测到已登录但不是管理员，重新检查...')
-      setTimeout(() => {
-        this.checkAdminRole()
-      }, 500)
-    }
-  },
-
-  checkAdminStatus: function() {
-    const isAdmin = wx.getStorageSync('isAdmin') || false
-    const adminRole = wx.getStorageSync('adminRole') || 'normal'
-    console.log('检查管理员状态:', isAdmin, '角色:', adminRole)
-    this.setData({ 
-      isAdmin: isAdmin,
-      adminRole: adminRole
-    })
   },
 
   checkLoginStatus: function() {
@@ -153,6 +127,10 @@ Page({
   },
 
   goToOrders: function(e) {
+    if (!this.data.isLoggedIn) {
+      wx.navigateTo({ url: '/pages/login/login' });
+      return;
+    }
     var status = e && e.currentTarget && e.currentTarget.dataset.status || 'all';
     wx.navigateTo({
       url: '/pages/orders/orders?status=' + status
@@ -212,6 +190,9 @@ Page({
           wx.removeStorageSync('userInfo');
           wx.removeStorageSync('token');
           wx.removeStorageSync('isAdmin');
+          wx.removeStorageSync('adminRole');
+          wx.removeStorageSync('userPhone');
+          wx.removeStorageSync('userId');
           this$1.setData({
             isLoggedIn: false,
             userInfo: null,

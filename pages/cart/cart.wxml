@@ -1,6 +1,6 @@
 <view class="container">
   <view class="header">
-    <text class="title">购物车</text>
+    <view><text class="title">预约单</text><text class="header-tip">选好水果后提交预约</text></view>
     <text class="count" wx:if="{{cart.length > 0}}">共{{cart.length}}件</text>
   </view>
 
@@ -40,6 +40,7 @@
   </view>
 
   <view class="footer" wx:if="{{cart.length > 0}}">
+    <view class="delivery-rule">到店自取 / 3km 内配送 ¥5</view>
     <view class="select-all" bindtap="toggleSelectAll">
       <view class="checkbox {{allSelected ? 'checked' : ''}}">
         <text wx:if="{{allSelected}}">✓</text>
@@ -49,7 +50,7 @@
     
     <view class="right">
       <view class="total">
-        <text>合计:</text>
+        <text>预估金额</text>
         <text class="price">¥{{totalPrice}}</text>
       </view>
       <view class="checkout-btn {{selectedCount > 0 ? '' : 'disabled'}}" bindtap="goToCheckout">

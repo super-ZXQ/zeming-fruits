@@ -32,6 +32,25 @@
   font-size: 52rpx;
 }
 
+.avatar-placeholder {
+  position: relative;
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: #dce7dc;
+}
+
+.avatar-placeholder:after {
+  position: absolute;
+  right: -10rpx;
+  bottom: -14rpx;
+  left: -10rpx;
+  height: 26rpx;
+  border-radius: 26rpx 26rpx 0 0;
+  background: #dce7dc;
+  content: '';
+}
+
 .user-detail,
 .login-tip {
   flex: 1;
@@ -104,7 +123,9 @@
   flex-direction: column;
 }
 
-.tab-icon {
+.tab-icon,
+.menu-icon {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,8 +134,12 @@
   margin-bottom: 10rpx;
   border-radius: 22rpx;
   background: #f0f5ef;
-  font-size: 36rpx;
 }
+.tab-icon:before, .menu-icon:before, .tab-icon:after, .menu-icon:after { position: absolute; content: ''; }
+.pending-icon:before { width: 24rpx; height: 24rpx; border: 3rpx solid #d09436; border-radius: 50%; }.pending-icon:after { width: 3rpx; height: 11rpx; background: #d09436; transform: translateY(-4rpx); }
+.confirmed-icon:before { width: 29rpx; height: 23rpx; border: 3rpx solid #185c3a; border-radius: 5rpx; }.confirmed-icon:after { width: 10rpx; height: 6rpx; border-bottom: 3rpx solid #185c3a; border-left: 3rpx solid #185c3a; transform: translate(4rpx, 2rpx) rotate(-45deg); }
+.completed-icon:before { width: 28rpx; height: 28rpx; border-radius: 50%; background: #e0f1e5; }.completed-icon:after { width: 12rpx; height: 7rpx; border-bottom: 3rpx solid #185c3a; border-left: 3rpx solid #185c3a; transform: rotate(-45deg); }
+.service-icon:before { width: 28rpx; height: 28rpx; border: 3rpx solid #b36c55; border-radius: 50%; }.service-icon:after { width: 12rpx; height: 3rpx; background: #b36c55; transform: translateY(-1rpx); }
 
 .order-tab text {
   color: #65716b;
@@ -147,8 +172,11 @@
   margin-right: 16rpx;
   border-radius: 17rpx;
   background: #f0f5ef;
-  font-size: 28rpx;
 }
+.address-icon:before { width: 19rpx; height: 24rpx; border: 3rpx solid #185c3a; border-radius: 15rpx 15rpx 15rpx 3rpx; transform: rotate(-45deg); }.address-icon:after { width: 6rpx; height: 6rpx; border-radius: 50%; background: #185c3a; }
+.coupon-icon:before { width: 29rpx; height: 19rpx; border: 3rpx solid #bd8b31; border-radius: 6rpx; }.coupon-icon:after { width: 3rpx; height: 13rpx; border-left: 3rpx dashed #bd8b31; }
+.phone-icon:before { width: 18rpx; height: 26rpx; border: 3rpx solid #b34d46; border-radius: 14rpx; transform: rotate(37deg); }
+.admin-icon:before { width: 24rpx; height: 24rpx; border: 3rpx solid #9a681d; border-radius: 50%; }.admin-icon:after { width: 7rpx; height: 7rpx; border-radius: 50%; background: #9a681d; }
 
 .menu-label {
   flex: 1;

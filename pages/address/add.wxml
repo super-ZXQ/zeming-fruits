@@ -22,7 +22,7 @@
           <text class="edit-btn">编辑</text>
         </view>
         <view class="distance-row">
-          <text class="distance" wx:if="{{distance}}">距您 {{distance}} 米</text>
+          <text class="distance" wx:if="{{distance}}">距店铺 {{distance}}</text>
         </view>
       </view>
     </view>

@@ -3,14 +3,14 @@
     <view class="user-info" bindtap="handleUserInfo">
       <view class="avatar">
         <text wx:if="{{isLoggedIn && userInfo}}">{{userInfo.nickname[0] || '我'}}</text>
-        <text wx:else>👤</text>
+        <view class="avatar-placeholder" wx:else></view>
       </view>
       <view class="user-detail" wx:if="{{isLoggedIn}}">
         <text class="nickname">{{userInfo.nickname || '用户'}}</text>
       </view>
       <view class="login-tip" wx:else>
         <text class="login-text">点击登录</text>
-        <text class="sub-text">登录后享受更多服务</text>
+        <text class="sub-text">管理预约、地址和配送进度</text>
       </view>
       <text class="arrow">›</text>
     </view>
@@ -28,19 +28,19 @@
     
     <view class="order-tabs">
       <view class="order-tab" bindtap="goToOrders" data-status="pending">
-        <view class="tab-icon">🕐</view>
+        <view class="tab-icon pending-icon"></view>
         <text>待确认</text>
       </view>
       <view class="order-tab" bindtap="goToOrders" data-status="confirmed">
-        <view class="tab-icon">📦</view>
+        <view class="tab-icon confirmed-icon"></view>
         <text>已确认</text>
       </view>
       <view class="order-tab" bindtap="goToOrders" data-status="completed">
-        <view class="tab-icon">✅</view>
+        <view class="tab-icon completed-icon"></view>
         <text>已完成</text>
       </view>
       <view class="order-tab" bindtap="goToOrders" data-status="refund">
-        <view class="tab-icon">🔄</view>
+        <view class="tab-icon service-icon"></view>
         <text>售后</text>
       </view>
     </view>
@@ -48,22 +48,22 @@
 
   <view class="menu-section">
     <view class="menu-item" bindtap="goToAddress">
-      <text class="menu-icon">📍</text>
+      <view class="menu-icon address-icon"></view>
       <text class="menu-label">收货地址</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="goToCoupons">
-      <text class="menu-icon">🎫</text>
+      <view class="menu-icon coupon-icon"></view>
       <text class="menu-label">优惠券</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="contactService">
-      <text class="menu-icon">📞</text>
+      <view class="menu-icon phone-icon"></view>
       <text class="menu-label">联系客服</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item admin-entry" bindtap="goToAdmin" wx:if="{{isAdmin}}">
-      <text class="menu-icon">⚙️</text>
+      <view class="menu-icon admin-icon"></view>
       <text class="menu-label">商品管理</text>
       <text class="admin-badge">管理员</text>
       <text class="arrow">›</text>

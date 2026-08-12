@@ -15,7 +15,7 @@
     </view>
   </view>
 
-  <view class="logistics-card" wx:if="{{order.status === 'paid' || order.status === 'completed'}}">
+  <view class="logistics-card" wx:if="{{order.status === 'confirmed' || order.status === 'preparing' || order.status === 'delivering' || order.status === 'completed'}}">
     <view class="logistics-header">
       <text class="logistics-icon">🚚</text>
       <text class="logistics-title">物流信息</text>
@@ -40,10 +40,6 @@
     <view class="info-item">
       <text class="label">下单时间</text>
       <text class="value">{{order.createTime}}</text>
-    </view>
-    <view class="info-item" wx:if="{{order.payTime}}">
-      <text class="label">支付时间</text>
-      <text class="value">{{order.payTime}}</text>
     </view>
     <view class="info-item">
       <text class="label">配送方式</text>
@@ -82,19 +78,16 @@
       <text>¥{{order.deliveryFee}}</text>
     </view>
     <view class="summary-item total">
-      <text>实付金额</text>
+      <text>预估金额</text>
       <text class="price">¥{{order.finalAmount}}</text>
     </view>
   </view>
 
   <view class="detail-footer">
-    <view class="action-btn" wx:if="{{order.status === 'pending'}}" bindtap="payOrder">
-      去支付
-    </view>
-    <view class="action-btn" wx:if="{{order.status === 'paid'}}" bindtap="viewLogistics">
+    <view class="action-btn" wx:if="{{order.status === 'confirmed' || order.status === 'preparing' || order.status === 'delivering'}}" bindtap="viewLogistics">
       查看物流
     </view>
-    <view class="action-btn" wx:if="{{order.status === 'paid'}}" bindtap="confirmReceive">
+    <view class="action-btn" wx:if="{{order.status === 'delivering'}}" bindtap="confirmReceive">
       确认收货
     </view>
     <view class="action-btn" wx:if="{{order.status === 'completed'}}" bindtap="applyRefund">

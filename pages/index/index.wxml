@@ -12,9 +12,6 @@
       <view class="header-btn" bindtap="shareApp">
         <text>📤</text>
       </view>
-      <view class="header-btn" bindtap="goToMember">
-        <text>👑</text>
-      </view>
     </view>
   </view>
 

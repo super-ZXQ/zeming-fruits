@@ -5,12 +5,12 @@ Page({
     notices: [
       '🎉 新用户首单立减 10 元，快来选购吧！',
       '🍓 草莓季特惠，精选草莓 8 折起',
-      '🚚 满 39 元免配送费，新鲜直达'
+      '🚚 3km 内配送费固定 5 元，超出范围暂不配送'
     ],
     banners: [
       { id: 1, title: '新鲜水果', subtitle: '产地直供 新鲜直达', emoji: '🍎', bgColor: 'linear-gradient(135deg, #43A047 0%, #2E7D32 100%)' },
       { id: 2, title: '限时秒杀', subtitle: '超值优惠 不容错过', emoji: '⚡', bgColor: 'linear-gradient(135deg, #e53935 0%, #c62828 100%)' },
-      { id: 3, title: '会员专享', subtitle: '充值返现 更多福利', emoji: '👑', bgColor: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)' }
+      { id: 3, title: '线上预约', subtitle: '先预约 到店或配送', emoji: '📦', bgColor: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)' }
     ],
     quickEntries: [
       { id: 'premium', name: '精品水果', emoji: '🍇', bgColor: 'linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%)' },
@@ -186,12 +186,6 @@ Page({
     wx.showShareMenu({
       withShareTicket: true,
       menus: ['shareAppMessage', 'shareTimeline']
-    });
-  },
-
-  goToMember() {
-    wx.navigateTo({
-      url: '/pages/recharge/recharge'
     });
   },
 

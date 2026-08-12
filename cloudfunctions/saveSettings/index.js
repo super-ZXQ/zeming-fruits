@@ -32,7 +32,6 @@ exports.main = async (event, context) => {
     const db = cloud.database()
     const settingsData = {
       notices: event.notices,
-      freeDeliveryThreshold: event.freeDeliveryThreshold,
       deliveryTip: event.deliveryTip,
       shopName: event.shopName,
       shopAddress: event.shopAddress,

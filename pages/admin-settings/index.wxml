@@ -46,18 +46,7 @@
     </view>
     
     <view class="form-item">
-      <text class="form-label">免配送费门槛（元）</text>
-      <input 
-        class="form-input" 
-        type="number" 
-        placeholder="请输入免配送费金额" 
-        value="{{freeDeliveryThreshold}}" 
-        bindinput="onInputFreeDelivery" 
-      />
-    </view>
-    
-    <view class="form-item">
-      <text class="form-label">配送费提示文字</text>
+      <text class="form-label">配送规则提示文字</text>
       <input 
         class="form-input" 
         placeholder="请输入配送费提示" 

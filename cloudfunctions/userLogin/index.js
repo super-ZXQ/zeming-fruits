@@ -35,8 +35,6 @@ exports.main = async (event, context) => {
           nickName: user.nickName || '微信用户',
           avatarUrl: user.avatarUrl || '',
           phone: user.phone || '',
-          memberLevel: user.memberLevel || 0,
-          memberBalance: user.memberBalance || 0,
           createTime: user.createTime,
           lastLoginTime: new Date()
         }
@@ -50,9 +48,7 @@ exports.main = async (event, context) => {
           openid: openid,
           nickName: '微信用户',
           avatarUrl: '',
-          phone: '',
-          memberLevel: 0,
-          memberBalance: 0
+          phone: ''
         }
       }
     }

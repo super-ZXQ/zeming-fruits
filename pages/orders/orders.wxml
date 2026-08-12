@@ -2,11 +2,11 @@
   <view class="tabs">
     <view class="tab {{currentStatus === 'all' ? 'active' : ''}}" bindtap="switchTab" data-status="all">全部</view>
     <view class="tab {{currentStatus === 'pending' ? 'active' : ''}}" bindtap="switchTab" data-status="pending">
-      <text>待付款</text>
+      <text>待确认</text>
       <view class="tab-badge" wx:if="{{pendingCount > 0}}">{{pendingCount}}</view>
     </view>
-    <view class="tab {{currentStatus === 'paid' ? 'active' : ''}}" bindtap="switchTab" data-status="paid">
-      <text>进行中</text>
+    <view class="tab {{currentStatus === 'confirmed' ? 'active' : ''}}" bindtap="switchTab" data-status="confirmed">
+      <text>已确认</text>
     </view>
     <view class="tab {{currentStatus === 'completed' ? 'active' : ''}}" bindtap="switchTab" data-status="completed">已完成</view>
   </view>
@@ -37,10 +37,10 @@
       </view>
       
       <view class="order-footer">
-        <text class="total">合计: <text class="price">¥{{item.totalAmount}}</text></text>
+        <text class="total">预估: <text class="price">¥{{item.totalAmount}}</text></text>
         <view class="actions">
-          <view class="action-btn" wx:if="{{item.status === 'pending'}}">去支付</view>
-          <view class="action-btn" wx:if="{{item.status === 'paid'}}">查看物流</view>
+          <view class="action-btn" wx:if="{{item.status === 'pending'}}">等待商家确认</view>
+          <view class="action-btn" wx:if="{{item.status === 'confirmed' || item.status === 'preparing' || item.status === 'delivering'}}">查看进度</view>
           <view class="action-btn" wx:if="{{item.status === 'completed'}}">再次购买</view>
         </view>
       </view>

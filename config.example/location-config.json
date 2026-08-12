@@ -9,7 +9,6 @@
   },
   "deliveryConfig": {
     "maxDistance": 3,
-    "deliveryFee": 5,
-    "freeDeliveryDistance": 0
+    "deliveryFee": 5
   }
 }

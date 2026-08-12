@@ -126,9 +126,7 @@ Page({
           openid: userData._openid || loginUserInfo.openid,
           phone: phoneNumber,
           nickname: userData.nickname || userData.nickName || '微信用户',
-          avatarUrl: userData.avatarUrl || '',
-          memberLevel: userData.memberLevel || 0,
-          memberBalance: userData.memberBalance || 0
+          avatarUrl: userData.avatarUrl || ''
         }
         console.log('老用户登录:', userInfo)
       } else {
@@ -137,9 +135,7 @@ Page({
           openid: loginUserInfo.openid,
           phone: phoneNumber,
           nickname: loginUserInfo.nickName,
-          avatarUrl: loginUserInfo.avatarUrl,
-          memberLevel: 0,
-          memberBalance: 0
+          avatarUrl: loginUserInfo.avatarUrl
         }
         
         await db.collection('users').add({
@@ -148,8 +144,6 @@ Page({
             phone: phoneNumber,
             nickname: loginUserInfo.nickName,
             avatarUrl: loginUserInfo.avatarUrl,
-            memberLevel: 0,
-            memberBalance: 0,
             createTime: db.serverDate()
           }
         })
@@ -224,7 +218,7 @@ Page({
   viewAgreement() {
     wx.showModal({
       title: '用户协议',
-      content: '欢迎使用泽明果业！\n\n本协议规定了用户使用小程序的相关条款，包括但不限于：\n\n1. 用户需保证提供的个人信息真实有效\n2. 订单提交后需在规定时间内完成支付\n3. 商品送达后请及时确认收货\n4. 如有问题可联系客服处理',
+      content: '欢迎使用泽明果业！\n\n1. 用户需保证提供的个人信息真实有效\n2. 提交预约后由商家确认商品与时间\n3. 商品送达后请及时确认收货\n4. 如有问题可联系客服处理',
       showCancel: false
     })
   },

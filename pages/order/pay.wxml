@@ -32,6 +32,7 @@
     </view>
 
     <view class="section" wx:if="{{deliveryType === 'delivery'}}">
+      <view class="delivery-rule">仅配送店铺 3km 内地址，配送费固定 ¥5</view>
       <view class="address-card" bindtap="chooseAddress">
         <view class="address-content" wx:if="{{address}}">
           <view class="address-header">
@@ -43,8 +44,8 @@
           </view>
           <view class="address-distance" wx:if="{{deliveryInfo}}">
             <text class="distance-badge {{deliveryInfo.canDeliver ? '' : 'error'}}">
-              <block wx:if="{{deliveryInfo.canDeliver}}">距您{{deliveryInfo.distanceStr}}km</block>
-              <block wx:else>超出配送范围</block>
+              <block wx:if="{{deliveryInfo.canDeliver}}">距店铺 {{deliveryInfo.distanceStr}}km，配送费 ¥5</block>
+              <block wx:else>超出 3km 配送范围</block>
             </text>
           </view>
         </view>
@@ -133,16 +134,13 @@
         </view>
         <view class="fee-item" wx:if="{{deliveryType === 'delivery'}}">
           <text>配送费</text>
-          <text wx:if="{{deliveryInfo && deliveryInfo.canDeliver}}">¥{{deliveryInfo.deliveryFee}}</text>
-          <text wx:else class="fee-error">超出范围</text>
+          <text wx:if="{{deliveryInfo && deliveryInfo.canDeliver}}">¥5</text>
+          <text wx:elif="{{address}}" class="fee-error">超出范围</text>
+          <text wx:else>请选择地址</text>
         </view>
         <view class="fee-item discount" wx:if="{{priceDetail.couponDiscount > 0}}">
           <text>优惠券</text>
           <text>-¥{{priceDetail.couponDiscount}}</text>
-        </view>
-        <view class="fee-item discount" wx:if="{{priceDetail.activityDiscount > 0}}">
-          <text>商家活动优惠</text>
-          <text>-¥{{priceDetail.activityDiscount}}</text>
         </view>
       </view>
     </view>
@@ -178,13 +176,13 @@
   <view class="footer">
     <view class="footer-left">
       <view class="price-row">
-        <text class="price-label">实付</text>
+        <text class="price-label">预估金额</text>
         <text class="price-value">¥{{priceDetail.total}}</text>
       </view>
       <text class="discount-tip" wx:if="{{priceDetail.totalDiscount > 0}}">共减 ¥{{priceDetail.totalDiscount}}</text>
     </view>
-    <view class="pay-btn {{canPay ? '' : 'disabled'}}" bindtap="submitOrder">
-      <text>普通支付</text>
+    <view class="pay-btn {{canSubmit ? '' : 'disabled'}}" bindtap="submitOrder">
+      <text>提交预约</text>
     </view>
   </view>
   

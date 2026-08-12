@@ -13,17 +13,13 @@ Page({
     orders: [],
     orderFilter: 'all',
     statusMap: {
-      pending: '待付款',
-      paid: '已支付',
+      pending: '待确认',
+      confirmed: '已确认',
+      preparing: '备货中',
       delivering: '配送中',
       completed: '已完成',
       cancelled: '已取消'
     },
-    finance: {
-      todayIncome: 0,
-      monthIncome: 0,
-      pending: 0
-    }
   },
 
   onLoad() {
@@ -31,7 +27,6 @@ Page({
     this.loadStats()
     this.loadHotGoods()
     this.loadOrders()
-    this.loadFinance()
   },
 
   onShow() {
@@ -150,50 +145,6 @@ Page({
       this.setData({ orders })
     } catch (err) {
       console.error('加载订单失败:', err)
-    }
-  },
-
-  async loadFinance() {
-    const now = new Date()
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    
-    try {
-      const todayRes = await db.collection('orders')
-        .where({
-          status: 'paid',
-          paymentTime: _.gte(todayStart)
-        })
-        .get()
-      
-      const todayIncome = todayRes.data.reduce((sum, order) => sum + (order.priceDetail?.total || 0), 0)
-      
-      const monthRes = await db.collection('orders')
-        .where({
-          status: 'paid',
-          paymentTime: _.gte(monthStart)
-        })
-        .get()
-      
-      const monthIncome = monthRes.data.reduce((sum, order) => sum + (order.priceDetail?.total || 0), 0)
-      
-      const pendingRes = await db.collection('orders')
-        .where({
-          status: 'pending'
-        })
-        .get()
-      
-      const pending = pendingRes.data.reduce((sum, order) => sum + (order.priceDetail?.total || 0), 0)
-      
-      this.setData({
-        finance: {
-          todayIncome: todayIncome.toFixed(2),
-          monthIncome: monthIncome.toFixed(2),
-          pending: pending.toFixed(2)
-        }
-      })
-    } catch (err) {
-      console.error('加载财务数据失败:', err)
     }
   },
 

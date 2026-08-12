@@ -9,7 +9,7 @@
       <text class="stat-icon">💰</text>
       <view class="stat-content">
         <text class="stat-value">¥{{stats.todaySales}}</text>
-        <text class="stat-label">今日销售额</text>
+        <text class="stat-label">今日预约金额</text>
       </view>
     </view>
     <view class="stat-card">
@@ -56,8 +56,8 @@
       <text class="section-title">订单列表</text>
       <view class="filter-tabs">
         <view class="filter-tab {{orderFilter === 'all' ? 'active' : ''}}" bindtap="filterOrders" data-filter="all">全部</view>
-        <view class="filter-tab {{orderFilter === 'pending' ? 'active' : ''}}" bindtap="filterOrders" data-filter="pending">待付款</view>
-        <view class="filter-tab {{orderFilter === 'paid' ? 'active' : ''}}" bindtap="filterOrders" data-filter="paid">待配送</view>
+        <view class="filter-tab {{orderFilter === 'pending' ? 'active' : ''}}" bindtap="filterOrders" data-filter="pending">待确认</view>
+        <view class="filter-tab {{orderFilter === 'confirmed' ? 'active' : ''}}" bindtap="filterOrders" data-filter="confirmed">已确认</view>
         <view class="filter-tab {{orderFilter === 'completed' ? 'active' : ''}}" bindtap="filterOrders" data-filter="completed">已完成</view>
       </view>
     </view>
@@ -95,23 +95,4 @@
     </view>
   </view>
 
-  <view class="section">
-    <view class="section-header">
-      <text class="section-title">资金明细</text>
-    </view>
-    <view class="finance-summary">
-      <view class="finance-item">
-        <text class="finance-label">今日收入</text>
-        <text class="finance-value income">+¥{{finance.todayIncome}}</text>
-      </view>
-      <view class="finance-item">
-        <text class="finance-label">本月收入</text>
-        <text class="finance-value income">+¥{{finance.monthIncome}}</text>
-      </view>
-      <view class="finance-item">
-        <text class="finance-label">待结算</text>
-        <text class="finance-value">¥{{finance.pending}}</text>
-      </view>
-    </view>
-  </view>
 </view>

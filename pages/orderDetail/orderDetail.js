@@ -4,15 +4,19 @@ Page({
     order: {},
     logisticsInfo: [],
     statusText: {
-      pending: '待付款',
-      paid: '处理中',
+      pending: '待商家确认',
+      confirmed: '已确认',
+      preparing: '备货中',
+      delivering: '配送中',
       completed: '已完成',
       refund: '售后中',
       cancelled: '已取消'
     },
     statusDesc: {
-      pending: '请尽快完成支付',
-      paid: '商家正在为您准备商品',
+      pending: '预约已提交，商家将尽快与您确认',
+      confirmed: '商家已确认您的预约',
+      preparing: '商家正在为您准备商品',
+      delivering: '商品正在配送中',
       completed: '订单已完成，感谢您的购买',
       refund: '售后申请处理中',
       cancelled: '订单已取消'
@@ -41,12 +45,6 @@ Page({
   },
 
   normalizeOrder(order) {
-    const statusMap = {
-      pending_payment: 'pending',
-      preparing: 'paid',
-      delivering: 'paid'
-    }
-    const status = statusMap[order.status] || order.status
     const priceDetail = order.priceDetail || {}
     const totalAmount = priceDetail.goodsTotal !== undefined ? priceDetail.goodsTotal : (order.totalAmount || 0)
     const deliveryFee = priceDetail.deliveryFee !== undefined ? priceDetail.deliveryFee : (order.deliveryFee || 0)
@@ -65,7 +63,7 @@ Page({
     return {
       ...order,
       id: order._id || order.id,
-      status,
+      status: order.status,
       address,
       items: (order.goods || order.items || []).map(item => ({
         ...item,
@@ -75,7 +73,7 @@ Page({
       deliveryFee,
       finalAmount,
       createTime: this.formatTime(order.createTime),
-      payTime: this.formatTime(order.paidAt || order.payTime)
+      confirmedTime: this.formatTime(order.confirmedAt)
     }
   },
 
@@ -93,53 +91,19 @@ Page({
 
   generateLogistics(order) {
     const logistics = []
-    const paidAt = order.payTime || order.createTime
+    const confirmedAt = order.confirmedTime || order.createTime
 
-    if (order.status === 'paid') {
-      logistics.push({ desc: '订单已支付，商家正在备货', time: paidAt })
+    if (['confirmed', 'preparing'].includes(order.status)) {
+      logistics.push({ desc: '商家已确认预约，正在备货', time: confirmedAt })
+    } else if (order.status === 'delivering') {
+      logistics.push({ desc: '商品正在配送中', time: this.formatTime(order.deliveringAt) || confirmedAt })
+      logistics.push({ desc: '商家已确认预约，正在备货', time: confirmedAt })
     } else if (order.status === 'completed') {
-      logistics.push({ desc: '商品已送达，订单已完成', time: this.formatTime(order.completedAt) || paidAt })
-      logistics.push({ desc: '订单已支付，商家开始备货', time: paidAt })
+      logistics.push({ desc: '商品已送达，订单已完成', time: this.formatTime(order.completedAt) || confirmedAt })
+      logistics.push({ desc: '商家已确认预约，开始备货', time: confirmedAt })
     }
 
     this.setData({ logisticsInfo: logistics })
-  },
-
-  async payOrder() {
-    try {
-      wx.showLoading({ title: '正在发起支付...', mask: true })
-      const res = await wx.cloud.callFunction({
-        name: 'payOrder',
-        data: { orderId: this.data.orderId }
-      })
-      wx.hideLoading()
-
-      if (!res.result || !res.result.success) {
-        throw new Error(res.result?.error || '发起支付失败')
-      }
-
-      const payment = res.result.data
-      await new Promise((resolve, reject) => {
-        wx.requestPayment({
-          timeStamp: payment.timeStamp,
-          nonceStr: payment.nonceStr,
-          package: payment.package,
-          signType: payment.signType || 'MD5',
-          paySign: payment.paySign,
-          success: resolve,
-          fail: reject
-        })
-      })
-
-      wx.showToast({ title: '支付成功', icon: 'success' })
-      setTimeout(() => this.loadOrderDetail(), 1000)
-    } catch (err) {
-      wx.hideLoading()
-      wx.showToast({
-        title: err.errMsg && err.errMsg.includes('cancel') ? '已取消支付' : '支付失败',
-        icon: 'none'
-      })
-    }
   },
 
   viewLogistics() {

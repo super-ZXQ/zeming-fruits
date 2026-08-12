@@ -7,9 +7,6 @@
       </view>
       <view class="user-detail" wx:if="{{isLoggedIn}}">
         <text class="nickname">{{userInfo.nickname || '用户'}}</text>
-        <view class="member-badge" style="background: linear-gradient(135deg, {{memberColor}} 0%, {{memberColor}}99 100%)">
-          <text>{{memberName}}</text>
-        </view>
       </view>
       <view class="login-tip" wx:else>
         <text class="login-text">点击登录</text>
@@ -18,19 +15,6 @@
       <text class="arrow">›</text>
     </view>
     
-    <view class="member-card" wx:if="{{isLoggedIn}}" bindtap="goToRecharge">
-      <view class="member-left">
-        <text class="vip-icon">💎</text>
-        <view class="member-info">
-          <text class="member-title">会员余额</text>
-          <text class="member-balance">¥{{memberBalance}}</text>
-        </view>
-      </view>
-      <view class="member-right">
-        <text>充值</text>
-        <text class="arrow">›</text>
-      </view>
-    </view>
   </view>
 
   <view class="order-section">
@@ -44,12 +28,12 @@
     
     <view class="order-tabs">
       <view class="order-tab" bindtap="goToOrders" data-status="pending">
-        <view class="tab-icon">💰</view>
-        <text>待付款</text>
+        <view class="tab-icon">🕐</view>
+        <text>待确认</text>
       </view>
-      <view class="order-tab" bindtap="goToOrders" data-status="paid">
+      <view class="order-tab" bindtap="goToOrders" data-status="confirmed">
         <view class="tab-icon">📦</view>
-        <text>进行中</text>
+        <text>已确认</text>
       </view>
       <view class="order-tab" bindtap="goToOrders" data-status="completed">
         <view class="tab-icon">✅</view>
@@ -71,11 +55,6 @@
     <view class="menu-item" bindtap="goToCoupons">
       <text class="menu-icon">🎫</text>
       <text class="menu-label">优惠券</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goToRecharge">
-      <text class="menu-icon">💳</text>
-      <text class="menu-label">会员充值</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="contactService">

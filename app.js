@@ -3,8 +3,6 @@ App({
     userInfo: null,
     token: null,
     cart: [],
-    memberLevel: 0,
-    memberBalance: 0,
     shopSettings: null
   },
 
@@ -99,8 +97,6 @@ App({
       if (userInfo && token) {
         this.globalData.userInfo = userInfo;
         this.globalData.token = token;
-        this.globalData.memberLevel = userInfo.memberLevel || 0;
-        this.globalData.memberBalance = userInfo.memberBalance || 0;
       }
     } catch (e) {
       console.log('检查登录状态失败', e);
@@ -110,22 +106,9 @@ App({
   setUserInfo(userInfo, token) {
     this.globalData.userInfo = userInfo;
     this.globalData.token = token;
-    this.globalData.memberLevel = userInfo.memberLevel || 0;
-    this.globalData.memberBalance = userInfo.memberBalance || 0;
     
     wx.setStorageSync('userInfo', userInfo);
     wx.setStorageSync('token', token);
-  },
-
-  updateMemberInfo(level, balance) {
-    this.globalData.memberLevel = level;
-    this.globalData.memberBalance = balance;
-    
-    if (this.globalData.userInfo) {
-      this.globalData.userInfo.memberLevel = level;
-      this.globalData.userInfo.memberBalance = balance;
-      wx.setStorageSync('userInfo', this.globalData.userInfo);
-    }
   },
 
   async loadShopSettings() {
@@ -136,7 +119,6 @@ App({
       if (res.data) {
         this.globalData.shopSettings = {
           notices: res.data.notices,
-          freeDeliveryThreshold: res.data.freeDeliveryThreshold,
           deliveryTip: res.data.deliveryTip,
           shopName: res.data.shopName,
           shopAddress: res.data.shopAddress,

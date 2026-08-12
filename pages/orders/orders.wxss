@@ -99,7 +99,9 @@
   color: #e53935;
 }
 
-.order-status.paid {
+.order-status.confirmed,
+.order-status.preparing,
+.order-status.delivering {
   color: #43A047;
 }
 

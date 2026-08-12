@@ -43,6 +43,15 @@
   padding: 24rpx;
 }
 
+.delivery-rule {
+  margin-bottom: 20rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 16rpx;
+  background: #f0f8f2;
+  color: #287449;
+  font-size: 24rpx;
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;

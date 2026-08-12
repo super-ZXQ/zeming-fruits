@@ -6,10 +6,9 @@ Page({
     notices: [
       '🎉 新用户首单立减 10 元，快来选购吧！',
       '🍓 草莓季特惠，精选草莓 8 折起',
-      '🚚 满 39 元免配送费，新鲜直达'
+      '🚚 3km 内配送费固定 5 元，超出范围暂不配送'
     ],
-    freeDeliveryThreshold: '39',
-    deliveryTip: '满 39 元免配送费，新鲜直达',
+    deliveryTip: '3km 内配送费固定 5 元，超出范围暂不配送',
     shopName: '泽明果业',
     shopAddress: '江苏省淮安市清江浦区济南路东冠逸景花苑 1 号楼 1-5.1-6 号',
     shopPhone: '15250878388',
@@ -52,8 +51,7 @@ Page({
         console.log('加载到数据:', JSON.stringify(res.data))
         this.setData({
           notices: res.data.notices || this.data.notices,
-          freeDeliveryThreshold: res.data.freeDeliveryThreshold || '39',
-          deliveryTip: res.data.deliveryTip || '满 39 元免配送费，新鲜直达',
+          deliveryTip: res.data.deliveryTip || '3km 内配送费固定 5 元，超出范围暂不配送',
           shopName: res.data.shopName || '泽明果业',
           shopAddress: res.data.shopAddress || '江苏省淮安市清江浦区济南路东冠逸景花苑 1 号楼 1-5.1-6 号',
           shopPhone: res.data.shopPhone || '15250878388',
@@ -87,12 +85,6 @@ Page({
     const notices = this.data.notices
     notices[2] = e.detail.value
     this.setData({ notices })
-  },
-
-  onInputFreeDelivery(e) {
-    this.setData({
-      freeDeliveryThreshold: e.detail.value
-    })
   },
 
   onInputDeliveryTip(e) {
@@ -139,7 +131,6 @@ Page({
         name: 'saveSettings',
         data: {
           notices: this.data.notices,
-          freeDeliveryThreshold: this.data.freeDeliveryThreshold,
           deliveryTip: this.data.deliveryTip,
           shopName: this.data.shopName,
           shopAddress: this.data.shopAddress,
@@ -159,7 +150,6 @@ Page({
       // 更新全局数据
       app.globalData.shopSettings = {
         notices: this.data.notices,
-        freeDeliveryThreshold: this.data.freeDeliveryThreshold,
         deliveryTip: this.data.deliveryTip,
         shopName: this.data.shopName,
         shopAddress: this.data.shopAddress,

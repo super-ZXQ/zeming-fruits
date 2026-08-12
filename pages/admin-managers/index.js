@@ -23,16 +23,7 @@ Page({
   },
 
   async getCurrentPhone() {
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'userLogin'
-      })
-      if (res.result.success) {
-        this.setData({ currentPhone: wx.getStorageSync('userPhone') })
-      }
-    } catch (err) {
-      console.error('获取手机号失败:', err)
-    }
+    this.setData({ currentPhone: wx.getStorageSync('userPhone') })
   },
 
   checkSuperAdmin() {

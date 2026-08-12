@@ -4,8 +4,10 @@ Page({
     orders: [],
     pendingCount: 0,
     statusText: {
-      pending: '待付款',
-      paid: '进行中',
+      pending: '待确认',
+      confirmed: '已确认',
+      preparing: '备货中',
+      delivering: '配送中',
       completed: '已完成',
       refund: '售后中',
       cancelled: '已取消'
@@ -28,9 +30,7 @@ Page({
         .limit(50)
         .get()
 
-      const allOrders = res.data
-        .filter(order => order.orderType !== 'recharge')
-        .map(order => this.normalizeOrder(order))
+      const allOrders = res.data.map(order => this.normalizeOrder(order))
       const currentStatus = this.data.currentStatus
       const orders = currentStatus === 'all'
         ? allOrders
@@ -47,12 +47,6 @@ Page({
   },
 
   normalizeOrder(order) {
-    const statusMap = {
-      pending_payment: 'pending',
-      preparing: 'paid',
-      delivering: 'paid'
-    }
-    const status = statusMap[order.status] || order.status
     const priceDetail = order.priceDetail || {}
     const totalAmount = priceDetail.total !== undefined
       ? priceDetail.total
@@ -61,7 +55,7 @@ Page({
     return {
       ...order,
       id: order._id || order.id,
-      status,
+      status: order.status,
       items: (order.goods || order.items || []).map(item => ({
         ...item,
         count: item.quantity || item.count || 1

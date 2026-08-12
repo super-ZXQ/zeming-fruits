@@ -129,7 +129,7 @@ Page({
     if (!app.globalData.userInfo) {
       wx.showModal({
         title: '提示',
-        content: '请先登录后再结算',
+        content: '请先登录后再提交预约',
         confirmText: '去登录',
         success: function(res) {
           if (res.confirm) {

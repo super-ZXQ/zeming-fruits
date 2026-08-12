@@ -53,7 +53,7 @@
         <text class="price">¥{{totalPrice}}</text>
       </view>
       <view class="checkout-btn {{selectedCount > 0 ? '' : 'disabled'}}" bindtap="goToCheckout">
-        去结算({{selectedCount}})
+        去预约({{selectedCount}})
       </view>
     </view>
   </view>

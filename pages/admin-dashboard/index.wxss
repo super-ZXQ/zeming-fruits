@@ -181,7 +181,8 @@
   color: #fa8c16;
 }
 
-.order-status.paid {
+.order-status.confirmed,
+.order-status.preparing {
   background: #e6f7ff;
   color: #1890ff;
 }
@@ -294,33 +295,4 @@
   font-size: 28rpx;
   color: #ff4d4f;
   font-weight: bold;
-}
-
-.finance-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 20rpx;
-}
-
-.finance-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20rpx;
-  background: #f5f5f5;
-  border-radius: 8rpx;
-}
-
-.finance-label {
-  font-size: 28rpx;
-  color: #666;
-}
-
-.finance-value {
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.finance-value.income {
-  color: #52c41a;
 }

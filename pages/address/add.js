@@ -1,5 +1,3 @@
-const tencentMap = require('../../utils/tencentMap.js')
-
 Page({
   data: {
     latitude: 33.588399,

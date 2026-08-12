@@ -2,9 +2,6 @@ Page({
   data: {
     isLoggedIn: false,
     userInfo: null,
-    memberName: '普通会员',
-    memberColor: '#999999',
-    memberBalance: '0.00',
     isAdmin: false
   },
 
@@ -21,23 +18,10 @@ Page({
     var app = getApp()
     var userInfo = app.globalData && app.globalData.userInfo
     var isLoggedIn = !!userInfo
-    var memberLevel = app.globalData && app.globalData.memberLevel || 0
-    var memberBalance = app.globalData && app.globalData.memberBalance || 0
-    
-    var levelNames = ['普通会员', '铜牌会员', '银牌会员', '金牌会员', '钻石会员']
-    var colors = ['#999999', '#cd7f32', '#c0c0c0', '#ffd700', '#b9f2ff']
-    
     this.setData({
       isLoggedIn: isLoggedIn,
-      userInfo: userInfo,
-      memberName: levelNames[memberLevel] || '普通会员',
-      memberColor: colors[memberLevel] || '#999999',
-      memberBalance: memberBalance.toFixed(2)
+      userInfo: userInfo
     })
-    
-    if (isLoggedIn && userInfo && userInfo.id) {
-      this.loadUserDataFromCloud(userInfo.id)
-    }
   },
 
   async checkAdminRole() {
@@ -93,33 +77,6 @@ Page({
     }
   },
 
-  async loadUserDataFromCloud(userId) {
-    try {
-      const db = wx.cloud.database()
-      // 使用手机号作为用户ID查询
-      const res = await db.collection('users').doc(userId).get()
-      
-      if (res.data) {
-        const user = res.data
-        const app = getApp()
-        
-        app.globalData.memberLevel = user.memberLevel || 0
-        app.globalData.memberBalance = user.memberBalance || 0
-        
-        var levelNames = ['普通会员', '铜牌会员', '银牌会员', '金牌会员', '钻石会员']
-        var colors = ['#999999', '#cd7f32', '#c0c0c0', '#ffd700', '#b9f2ff']
-        
-        this.setData({
-          memberName: levelNames[user.memberLevel || 0] || '普通会员',
-          memberColor: colors[user.memberLevel || 0] || '#999999',
-          memberBalance: (user.memberBalance || 0).toFixed(2)
-        })
-      }
-    } catch (err) {
-      console.log('加载用户数据失败:', err)
-    }
-  },
-
   handleUserInfo: function() {
     if (!this.data.isLoggedIn) {
       wx.navigateTo({ url: '/pages/login/login' });
@@ -147,14 +104,6 @@ Page({
 
   goToCoupons() {
     wx.showToast({ title: '暂无可用优惠券', icon: 'none' });
-  },
-
-  goToRecharge: function() {
-    if (!this.data.isLoggedIn) {
-      wx.navigateTo({ url: '/pages/login/login' });
-      return;
-    }
-    wx.navigateTo({ url: '/pages/recharge/recharge' });
   },
 
   contactService: function() {
@@ -185,8 +134,6 @@ Page({
           var app = getApp();
           app.globalData.userInfo = null;
           app.globalData.token = null;
-          app.globalData.memberLevel = 0;
-          app.globalData.memberBalance = 0;
           wx.removeStorageSync('userInfo');
           wx.removeStorageSync('token');
           wx.removeStorageSync('isAdmin');
@@ -196,9 +143,6 @@ Page({
           this$1.setData({
             isLoggedIn: false,
             userInfo: null,
-            memberName: '普通会员',
-            memberColor: '#999999',
-            memberBalance: '0.00',
             isAdmin: false
           });
           wx.showToast({ title: '已退出登录', icon: 'success' });

@@ -25,50 +25,13 @@ Page({
   },
 
   async checkAdminRole() {
-    console.log('=== 开始检查管理员角色 ===')
     try {
-      const db = wx.cloud.database()
-      const phone = wx.getStorageSync('userPhone')
-      
-      console.log('当前用户的手机号:', phone)
-      
-      if (!phone) {
-        console.log('没有手机号，设置isAdmin为false')
-        wx.setStorageSync('isAdmin', false)
-        wx.setStorageSync('adminRole', 'normal')
-        this.setData({ isAdmin: false, adminRole: 'normal' })
-        return
-      }
-      
-      console.log('查询managers集合...')
-      const res = await db.collection('managers').where({ phone: phone }).get()
-      
-      console.log('查询结果:', res)
-      console.log('res.data:', res.data)
-      console.log('res.data长度:', res.data ? res.data.length : 0)
-      
-      if (res.data && res.data.length > 0) {
-        const manager = res.data[0]
-        console.log('找到管理员记录:', manager)
-        if (manager.status === 'active') {
-          wx.setStorageSync('isAdmin', true)
-          wx.setStorageSync('adminRole', manager.role || 'staff')
-          this.setData({
-            isAdmin: true,
-            adminRole: manager.role || 'staff'
-          })
-          console.log('✓ 设置为管理员，角色:', manager.role)
-          return
-        } else {
-          console.log('管理员状态不是active，status:', manager.status)
-        }
-      } else {
-        console.log('未找到管理员记录')
-      }
-      
-      wx.setStorageSync('isAdmin', false)
-      wx.setStorageSync('adminRole', 'normal')
-      this.setData({ isAdmin: false, adminRole: 'normal' })
+      const result = await wx.cloud.callFunction({ name: 'adminAuth' })
+      const isAdmin = !!(result.result && result.result.isAdmin)
+      const adminRole = result.result && result.result.role || 'normal'
+      wx.setStorageSync('isAdmin', isAdmin)
+      wx.setStorageSync('adminRole', adminRole)
+      this.setData({ isAdmin, adminRole })
     } catch (err) {
       console.error('检查管理员角色失败:', err)
       wx.setStorageSync('isAdmin', false)

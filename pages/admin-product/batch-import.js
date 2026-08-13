@@ -142,7 +142,12 @@ Page({
       mediaType: ['image'],
       sourceType: ['album', 'camera'],
       success(res) {
-        const tempFilePath = res.tempFiles[0].tempFilePath
+        const image = res.tempFiles[0]
+        if (!image || image.size > 200 * 1024) {
+          wx.showToast({ title: '请上传 200KB 以内的图片', icon: 'none' })
+          return
+        }
+        const tempFilePath = image.tempFilePath
         that.setData({ tempImagePath: tempFilePath })
         that.uploadImage(tempFilePath)
       }

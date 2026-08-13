@@ -26,7 +26,8 @@
   "requiredPrivateInfos": [
     "chooseAddress",
     "chooseLocation",
-    "getLocation"
+    "getLocation",
+    "getPhoneNumber"
   ],
   "window": {
     "backgroundTextStyle": "dark",

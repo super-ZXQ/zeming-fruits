@@ -14,11 +14,13 @@
 - 地址管理与腾讯地图配送范围校验
 - 预约订单、订单进度和售后申请
 - 商品、优惠券、店铺信息与订单管理
+- 管理员商品改价、上架与下架
 
 ## 云函数
 
 - `createReservation`：服务端校验商品价格、库存、优惠券和配送范围后创建预约单
 - `decryptPhone`、`userLogin`：手机号登录
+- `adminAuth`、`adminProducts`：管理员身份核验和商品管理
 - `saveSettings`：店铺信息保存
 - `parseExcel`：商品批量导入
 
@@ -26,5 +28,9 @@
 
 1. 在 `config/location-config.json` 配置腾讯地图 Key。
 2. 用微信开发者工具导入项目并关联云开发环境。
-3. 在云函数目录中上传并部署 `createReservation` 及其他所需云函数。
+3. 在云函数目录中上传并部署 `createReservation`、`decryptPhone`、`userLogin`、`adminAuth`、`adminProducts` 及其他所需云函数。
 4. 在云开发控制台创建 `users`、`addresses`、`products`、`orders`、`coupons`、`settings`、`managers` 集合。
+
+## 配置管理员账号
+
+管理员必须先用手机号完成一次登录。然后在云开发数据库的 `managers` 集合新增一条记录：`phone` 为该管理员手机号、`status` 为 `active`、`role` 为 `owner` 或 `staff`。已在 `admins.adminOpenids` 中配置 OpenID 的账号也会自动获得管理员权限。

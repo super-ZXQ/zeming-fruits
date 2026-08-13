@@ -4,9 +4,7 @@ Page({
   data: {
     agreed: false,
     loading: false,
-    logoUrl: '/images/store-logo.jpg',
-    showPrivacyModal: false,
-    pendingLoginEvent: null
+    logoUrl: '/images/store-logo.jpg'
   },
 
   onLoad() {
@@ -19,14 +17,10 @@ Page({
     this.setData({ agreed })
   },
 
-  preventMove() {
-    return false
-  },
-
   toggleAgreement() {
-    this.setData({
-      agreed: !this.data.agreed
-    })
+    const agreed = !this.data.agreed
+    this.setData({ agreed })
+    wx.setStorageSync('privacyAgreed', agreed)
   },
 
   skipLogin() {
@@ -37,21 +31,23 @@ Page({
 
   async getPhoneNumber(e) {
     if (!this.data.agreed) {
-      this.setData({
-        showPrivacyModal: true,
-        pendingLoginEvent: e
-      })
+      wx.showToast({ title: '请先阅读并同意相关协议', icon: 'none' })
       return
     }
 
-    await this.doGetPhoneNumber(e)
-  },
-
-  async doGetPhoneNumber(e) {
     if (e.detail.errMsg !== 'getPhoneNumber:ok') {
       wx.showToast({
         title: '您需要授权手机号才能登录',
         icon: 'none'
+      })
+      return
+    }
+
+    if (!e.detail.code) {
+      wx.showModal({
+        title: '暂时无法获取手机号',
+        content: '请使用真机微信重新点击授权；开发者工具模拟器不会返回真实手机号。',
+        showCancel: false
       })
       return
     }
@@ -156,7 +152,7 @@ Page({
       wx.setStorageSync('userPhone', phoneNumber)
       wx.setStorageSync('userId', phoneNumber)
 
-      await this.checkAdminByPhone(phoneNumber)
+      const admin = await this.checkAdminByPhone(phoneNumber)
 
       wx.hideLoading()
       wx.showToast({
@@ -166,9 +162,23 @@ Page({
       })
 
       setTimeout(() => {
-        wx.switchTab({
-          url: '/pages/index/index'
-        })
+        if (admin) {
+          wx.showModal({
+            title: '管理员登录成功',
+            content: '是否进入商品管理工作台？',
+            confirmText: '进入后台',
+            cancelText: '顾客首页',
+            success: result => {
+              if (result.confirm) {
+                wx.navigateTo({ url: '/pages/admin/admin' })
+              } else {
+                wx.switchTab({ url: '/pages/index/index' })
+              }
+            }
+          })
+        } else {
+          wx.switchTab({ url: '/pages/index/index' })
+        }
       }, 1500)
 
     } catch (err) {
@@ -187,26 +197,11 @@ Page({
   async checkAdminByPhone(phone) {
     console.log('通过手机号检查管理员, phone:', phone)
     try {
-      const db = wx.cloud.database()
-      const res = await db.collection('managers').where({ phone: phone }).get()
-
-      console.log('查询结果:', res)
-
-      if (res.data && res.data.length > 0) {
-        const manager = res.data[0]
-        console.log('找到管理员记录:', manager)
-        if (manager.status === 'active') {
-          wx.setStorageSync('isAdmin', true)
-          wx.setStorageSync('adminRole', manager.role || 'staff')
-          console.log('✓ 设置为管理员，角色:', manager.role)
-          return true
-        }
-      }
-
-      console.log('未找到管理员记录')
-      wx.setStorageSync('isAdmin', false)
-      wx.setStorageSync('adminRole', 'normal')
-      return false
+      const result = await wx.cloud.callFunction({ name: 'adminAuth' })
+      const admin = result.result && result.result.isAdmin
+      wx.setStorageSync('isAdmin', !!admin)
+      wx.setStorageSync('adminRole', result.result && result.result.role || 'normal')
+      return !!admin
     } catch (err) {
       console.error('检查管理员失败:', err)
       wx.setStorageSync('isAdmin', false)
@@ -228,48 +223,6 @@ Page({
       title: '隐私政策',
       content: '我们重视您的隐私保护：\n\n1. 收集的信息仅用于提供服务和改善用户体验\n2. 不会将您的信息用于其他商业目的\n3. 采取安全措施保护您的个人信息\n4. 如有任何隐私问题，请联系客服',
       showCancel: false
-    })
-  },
-
-  viewPrivacyInModal() {
-    wx.showModal({
-      title: '用户隐私协议',
-      content: '【泽明果业隐私协议】\n\n一、信息收集\n我们可能收集以下信息：\n1. 手机号码：用于账号注册和身份验证\n2. 收货地址：用于商品配送\n3. 定位信息：用于计算配送距离\n\n二、信息使用\n收集的信息仅用于提供订单服务、配送服务及改善用户体验。\n\n三、信息保护\n我们采用业界标准的安全措施保护您的个人信息。\n\n四、权利行使\n您有权访问、更正或删除您的个人信息。',
-      showCancel: false,
-      confirmText: '我已了解'
-    })
-  },
-
-  agreePrivacy() {
-    this.setData({
-      agreed: true,
-      showPrivacyModal: false
-    })
-    wx.setStorageSync('privacyAgreed', true)
-    
-    if (this.data.pendingLoginEvent) {
-      const event = this.data.pendingLoginEvent
-      this.setData({ pendingLoginEvent: null })
-      this.doGetPhoneNumber(event)
-    }
-  },
-
-  disagreePrivacy() {
-    this.setData({
-      showPrivacyModal: false,
-      pendingLoginEvent: null
-    })
-    wx.showToast({
-      title: '需要同意隐私协议才能使用',
-      icon: 'none',
-      duration: 2000
-    })
-  },
-
-  closePrivacyModal() {
-    this.setData({
-      showPrivacyModal: false,
-      pendingLoginEvent: null
     })
   }
 })

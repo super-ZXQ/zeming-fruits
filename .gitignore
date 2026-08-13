@@ -13,6 +13,8 @@ cloudfunctions/*/admin-config.json
 *.log
 preview-*.png
 preview-info.json
+devtools-login*.png
+devtools-login*.json
 
 .DS_Store
 Thumbs.db

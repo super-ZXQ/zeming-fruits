@@ -1,174 +1,93 @@
-const db = wx.cloud.database()
-const _ = db.command
-
 Page({
   data: {
-    stats: {
-      todaySales: 0,
-      todayOrders: 0,
-      newUsers: 0,
-      couponUsed: 0
-    },
+    authorized: false,
+    stats: { todaySales: '0.00', todayOrders: 0, newUsers: 0, couponUsed: 0 },
     hotGoods: [],
     orders: [],
     orderFilter: 'all',
     statusMap: {
-      pending: '待确认',
-      confirmed: '已确认',
-      preparing: '备货中',
-      delivering: '配送中',
-      completed: '已完成',
-      cancelled: '已取消'
+      pending: '待确认', confirmed: '已确认', preparing: '备货中',
+      delivering: '配送中', completed: '已完成', cancelled: '已取消'
     },
+    actionMap: {
+      pending: '确认预约', confirmed: '开始备货', preparing: '开始配送', delivering: '完成订单'
+    }
   },
 
   onLoad() {
     this.checkAdmin()
-    this.loadStats()
-    this.loadHotGoods()
-    this.loadOrders()
   },
 
   onShow() {
-    this.loadStats()
+    if (this.data.authorized) this.loadDashboard()
   },
 
-  checkAdmin() {
-    const isAdmin = wx.getStorageSync('isAdmin')
-    if (!isAdmin) {
+  async checkAdmin() {
+    try {
+      const result = await wx.cloud.callFunction({ name: 'adminAuth' })
+      if (!result.result || !result.result.isAdmin) throw new Error('您不是管理员')
+      this.setData({ authorized: true })
+      this.loadDashboard()
+    } catch (err) {
       wx.showModal({
-        title: '无权限',
-        content: '您不是管理员',
+        title: '无访问权限',
+        content: err.message || '请使用已授权的管理员账号登录',
         showCancel: false,
-        success: () => {
-          wx.navigateBack()
-        }
+        success: () => wx.navigateBack()
       })
     }
   },
 
-  async loadStats() {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
+  async loadDashboard() {
     try {
-      const ordersRes = await db.collection('orders')
-        .where({
-          createTime: _.gte(today),
-          status: _.neq('cancelled')
-        })
-        .get()
-      
-      const todaySales = ordersRes.data.reduce((sum, order) => sum + (order.priceDetail?.total || 0), 0)
-      const todayOrders = ordersRes.data.length
-      
-      const usersRes = await db.collection('users')
-        .where({
-          createTime: _.gte(today)
-        })
-        .count()
-      
-      const couponsRes = await db.collection('coupons')
-        .where({
-          usedCount: _.gt(0)
-        })
-        .get()
-      
-      const couponUsed = couponsRes.data.reduce((sum, c) => sum + (c.usedCount || 0), 0)
-      
+      wx.showLoading({ title: '加载中', mask: true })
+      const result = await wx.cloud.callFunction({ name: 'adminOrders', data: { action: 'dashboard' } })
+      if (!result.result || !result.result.success) throw new Error('加载后台数据失败')
+      const { actionMap } = this.data
+      const orders = (result.result.orders || []).map((order, index) => ({
+        ...order,
+        orderIndex: (result.result.orders || []).length - index,
+        createTimeText: this.formatTime(order.createTime),
+        nextAction: actionMap[order.status] || ''
+      })).filter(order => this.data.orderFilter === 'all' || order.status === this.data.orderFilter)
       this.setData({
-        stats: {
-          todaySales: todaySales.toFixed(2),
-          todayOrders,
-          newUsers: usersRes.total,
-          couponUsed
-        }
+        stats: result.result.stats || this.data.stats,
+        hotGoods: result.result.hotGoods || [],
+        orders
       })
     } catch (err) {
-      console.error('加载统计数据失败:', err)
-    }
-  },
-
-  async loadHotGoods() {
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'getHotGoods'
-      })
-      
-      if (res.result.success) {
-        this.setData({ hotGoods: res.result.data })
-      }
-    } catch (err) {
-      console.error('加载热销商品失败:', err)
-    }
-  },
-
-  async loadOrders() {
-    const { orderFilter } = this.data
-    
-    try {
-      let query = {}
-      if (orderFilter !== 'all') {
-        query.status = orderFilter
-      }
-      
-      const res = await db.collection('orders')
-        .where(query)
-        .orderBy('createTime', 'desc')
-        .limit(20)
-        .get()
-      
-      const orders = await Promise.all(res.data.map(async (order, index) => {
-        let userInfo = null
-        if (order._openid) {
-          try {
-            const userRes = await db.collection('users')
-              .where({ _openid: order._openid })
-              .limit(1)
-              .get()
-            if (userRes.data && userRes.data.length > 0) {
-              userInfo = userRes.data[0]
-            }
-          } catch (e) {
-            console.log('获取用户信息失败:', e)
-          }
-        }
-        
-        return {
-          ...order,
-          orderIndex: res.data.length - index,
-          userInfo,
-          createTime: this.formatTime(order.createTime)
-        }
-      }))
-      
-      this.setData({ orders })
-    } catch (err) {
-      console.error('加载订单失败:', err)
+      console.error('加载后台数据失败:', err)
+      wx.showToast({ title: err.message || '加载失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
     }
   },
 
   filterOrders(e) {
-    const filter = e.currentTarget.dataset.filter
-    this.setData({ orderFilter: filter })
-    this.loadOrders()
+    this.setData({ orderFilter: e.currentTarget.dataset.filter })
+    this.loadDashboard()
   },
 
-  viewOrder(e) {
+  async advanceOrder(e) {
     const id = e.currentTarget.dataset.id
-    wx.navigateTo({
-      url: `/pages/orderDetail/orderDetail?id=${id}`
-    })
+    try {
+      wx.showLoading({ title: '处理中', mask: true })
+      const result = await wx.cloud.callFunction({ name: 'adminOrders', data: { action: 'advance', id } })
+      if (!result.result || !result.result.success) throw new Error('订单状态更新失败')
+      wx.showToast({ title: '订单状态已更新', icon: 'success' })
+      this.loadDashboard()
+    } catch (err) {
+      wx.showToast({ title: err.message || '操作失败', icon: 'none' })
+    } finally {
+      wx.hideLoading()
+    }
   },
 
   formatTime(date) {
     if (!date) return ''
     const d = new Date(date)
-    const year = d.getFullYear()
-    const month = String(d.getMonth() + 1).padStart(2, '0')
-    const day = String(d.getDate()).padStart(2, '0')
-    const hour = String(d.getHours()).padStart(2, '0')
-    const minute = String(d.getMinutes()).padStart(2, '0')
-    return `${year}-${month}-${day} ${hour}:${minute}`
+    if (Number.isNaN(d.getTime())) return ''
+    const pad = value => String(value).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
   }
 })

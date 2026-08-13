@@ -47,39 +47,40 @@ Page({
         .limit(50)
         .get();
       
-      if (res.data && res.data.length > 0) {
-        let filteredProducts = res.data;
-        const categoryProducts = res.data.filter(p => p.category === category.id);
+      const activeProducts = (res.data || []).filter(product => product.status !== 'inactive' && product.status !== 'soldout')
+      if (activeProducts.length > 0) {
+        let filteredProducts = activeProducts;
+        const categoryProducts = activeProducts.filter(p => p.category === category.id);
         
         if (categoryProducts.length > 0) {
           filteredProducts = categoryProducts;
         } else if (category.id === 'berry') {
-          filteredProducts = res.data.filter(p => 
+          filteredProducts = activeProducts.filter(p =>
             (p.name && (p.name.includes('草莓') || p.name.includes('樱桃') || p.name.includes('车厘子'))) ||
             (p.emoji && (p.emoji === '🍓' || p.emoji === '🍒'))
           );
         } else if (category.id === 'durian') {
-          filteredProducts = res.data.filter(p => 
+          filteredProducts = activeProducts.filter(p =>
             (p.name && (p.name.includes('榴莲') || p.name.includes('山竹'))) ||
             (p.emoji && p.emoji === '🥝')
           );
         } else if (category.id === 'imported') {
-          filteredProducts = res.data.filter(p => 
+          filteredProducts = activeProducts.filter(p =>
             (p.tag && p.tag.includes('进口')) ||
             (p.name && p.name.includes('进口'))
           );
         } else if (category.id === 'freshcut') {
-          filteredProducts = res.data.filter(p => 
+          filteredProducts = activeProducts.filter(p =>
             (p.name && (p.name.includes('鲜切') || p.name.includes('拼盘'))) ||
             (p.emoji && (p.emoji === '🍉' || p.emoji === '🍍' || p.emoji === '🍈'))
           );
         } else if (category.id === 'dried') {
-          filteredProducts = res.data.filter(p => 
+          filteredProducts = activeProducts.filter(p =>
             (p.name && (p.name.includes('干') || p.name.includes('坚果') || p.name.includes('核桃') || p.name.includes('葡萄干'))) ||
             (p.emoji && p.emoji === '🥜')
           );
         } else if (category.id === 'snacks') {
-          filteredProducts = res.data.filter(p => 
+          filteredProducts = activeProducts.filter(p =>
             (p.name && (p.name.includes('饼干') || p.name.includes('巧克力') || p.name.includes('糖果'))) ||
             (p.emoji && (p.emoji === '🍪' || p.emoji === '🍫'))
           );

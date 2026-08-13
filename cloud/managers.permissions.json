@@ -1,6 +1,6 @@
 {
-  "create": "all",
-  "read": "all",
-  "update": "all",
-  "delete": "all"
+  "create": false,
+  "read": false,
+  "update": false,
+  "delete": false
 }

@@ -41,6 +41,7 @@ Page({
 
   onShow() {
     this.initGoods()
+    this.loadDefaultAddress()
   },
 
   initGoods() {
@@ -58,8 +59,10 @@ Page({
 
   async loadDefaultAddress() {
     try {
+      const selectedId = wx.getStorageSync('checkoutAddressId')
+      if (selectedId) wx.removeStorageSync('checkoutAddressId')
       const res = await wx.cloud.database().collection('addresses').orderBy('createdAt', 'desc').get()
-      const saved = res.data.find(item => item.isDefault) || res.data[0]
+      const saved = (selectedId && res.data.find(item => item._id === selectedId)) || res.data.find(item => item.isDefault) || res.data[0]
       if (!saved) return
       this.setData({ address: this.normalizeSavedAddress(saved) })
       if (this.data.deliveryType === 'delivery') await this.checkDeliveryRange()
@@ -115,32 +118,7 @@ Page({
   },
 
   chooseAddress() {
-    wx.chooseAddress({
-      success: async res => {
-        const detailInfo = `${res.provinceName}${res.cityName}${res.countyName}${res.detailInfo}`
-        try {
-          const location = await tencentMap.geocoder(detailInfo)
-          this.setData({
-            address: {
-              userName: res.userName,
-              telNumber: res.telNumber,
-              detailInfo,
-              location
-            }
-          })
-          await this.checkDeliveryRange()
-        } catch (err) {
-          this.setData({ address: null, canDeliver: false, deliveryInfo: null })
-          wx.showToast({ title: '地址无法定位，请更换地址', icon: 'none' })
-        }
-        this.calculatePrice()
-      },
-      fail: err => {
-        if (!err.errMsg || !err.errMsg.includes('cancel')) {
-          wx.showToast({ title: '请选择收货地址', icon: 'none' })
-        }
-      }
-    })
+    wx.navigateTo({ url: '/pages/address/address?select=1' })
   },
 
   async checkDeliveryRange() {

@@ -1,54 +1,23 @@
 <view class="container">
-  <view class="header">
-    <text class="title">数据看板</text>
-    <text class="date">{{today}}</text>
-  </view>
+  <view class="header"><text class="title">数据看板</text></view>
 
   <view class="stats-grid">
-    <view class="stat-card">
-      <text class="stat-icon">💰</text>
-      <view class="stat-content">
-        <text class="stat-value">¥{{stats.todaySales}}</text>
-        <text class="stat-label">今日预约金额</text>
-      </view>
-    </view>
-    <view class="stat-card">
-      <text class="stat-icon">📦</text>
-      <view class="stat-content">
-        <text class="stat-value">{{stats.todayOrders}}</text>
-        <text class="stat-label">今日订单</text>
-      </view>
-    </view>
-    <view class="stat-card">
-      <text class="stat-icon">👥</text>
-      <view class="stat-content">
-        <text class="stat-value">{{stats.newUsers}}</text>
-        <text class="stat-label">新增用户</text>
-      </view>
-    </view>
-    <view class="stat-card">
-      <text class="stat-icon">🎫</text>
-      <view class="stat-content">
-        <text class="stat-value">{{stats.couponUsed}}</text>
-        <text class="stat-label">优惠券使用</text>
-      </view>
-    </view>
+    <view class="stat-card"><view class="stat-content"><text class="stat-value">¥{{stats.todaySales}}</text><text class="stat-label">今日预约金额</text></view></view>
+    <view class="stat-card"><view class="stat-content"><text class="stat-value">{{stats.todayOrders}}</text><text class="stat-label">今日订单</text></view></view>
+    <view class="stat-card"><view class="stat-content"><text class="stat-value">{{stats.newUsers}}</text><text class="stat-label">新增用户</text></view></view>
+    <view class="stat-card"><view class="stat-content"><text class="stat-value">{{stats.couponUsed}}</text><text class="stat-label">优惠券使用</text></view></view>
   </view>
 
   <view class="section">
-    <view class="section-header">
-      <text class="section-title">热销商品 TOP5</text>
-    </view>
-    <view class="hot-goods">
+    <view class="section-header"><text class="section-title">热销商品 TOP5</text></view>
+    <view class="hot-goods" wx:if="{{hotGoods.length}}">
       <view class="goods-item" wx:for="{{hotGoods}}" wx:key="_id">
         <view class="goods-rank {{index < 3 ? 'top' : ''}}">{{index + 1}}</view>
-        <view class="goods-info">
-          <text class="goods-name">{{item.name}}</text>
-          <text class="goods-sales">销量: {{item.totalSales}}</text>
-        </view>
+        <view class="goods-info"><text class="goods-name">{{item.name}}</text><text class="goods-sales">销量 {{item.totalSales}}</text></view>
         <text class="goods-revenue">¥{{item.totalRevenue}}</text>
       </view>
     </view>
+    <text class="empty-text" wx:else>暂无商品数据</text>
   </view>
 
   <view class="section">
@@ -61,38 +30,16 @@
         <view class="filter-tab {{orderFilter === 'completed' ? 'active' : ''}}" bindtap="filterOrders" data-filter="completed">已完成</view>
       </view>
     </view>
-    <view class="order-list">
-      <view class="order-item" wx:for="{{orders}}" wx:key="_id" bindtap="viewOrder" data-id="{{item._id}}">
-        <view class="order-header">
-          <view class="order-info">
-            <text class="order-index">#{{item.orderIndex}}</text>
-            <text class="order-no">{{item.orderNo || item._id}}</text>
-          </view>
-          <text class="order-status {{item.status}}">{{statusMap[item.status]}}</text>
-        </view>
-        <view class="order-customer" wx:if="{{item.userInfo}}">
-          <text class="customer-name">👤 {{item.userInfo.nickname || '匿名用户'}}</text>
-          <text class="customer-phone" wx:if="{{item.userInfo.phone}}">📱 {{item.userInfo.phone}}</text>
-        </view>
-        <view class="order-goods">
-          <view class="goods-item" wx:for="{{item.goods}}" wx:for-item="goods" wx:key="id">
-            <text class="goods-emoji">{{goods.emoji || '🍎'}}</text>
-            <text class="goods-name">{{goods.name}}</text>
-            <text class="goods-quantity">× {{goods.quantity}}</text>
-            <text class="goods-price">¥{{goods.price}}</text>
-          </view>
-        </view>
-        <view class="order-delivery">
-          <text wx:if="{{item.deliveryType === 'pickup'}}">🚶 到店自提</text>
-          <text wx:else>🚚 配送上门</text>
-          <text wx:if="{{item.deliveryTime}}"> | 📅 {{item.deliveryTime.date}} {{item.deliveryTime.timeSlot}}</text>
-        </view>
-        <view class="order-footer">
-          <text class="order-time">{{item.createTime}}</text>
-          <text class="order-total">¥{{item.priceDetail.total}}</text>
-        </view>
+    <view class="order-list" wx:if="{{orders.length}}">
+      <view class="order-item" wx:for="{{orders}}" wx:key="_id">
+        <view class="order-header"><view class="order-info"><text class="order-index">#{{item.orderIndex}}</text><text class="order-no">{{item.orderNo || item._id}}</text></view><text class="order-status {{item.status}}">{{statusMap[item.status]}}</text></view>
+        <view class="order-customer" wx:if="{{item.userInfo}}"><text class="customer-name">{{item.userInfo.nickname || '微信用户'}}</text><text class="customer-phone" wx:if="{{item.userInfo.phone}}">{{item.userInfo.phone}}</text></view>
+        <view class="order-goods"><view class="goods-item" wx:for="{{item.goods}}" wx:for-item="goods" wx:key="id"><text class="goods-emoji">{{goods.emoji || '🍉'}}</text><text class="goods-name">{{goods.name}}</text><text class="goods-quantity">× {{goods.quantity}}</text><text class="goods-price">¥{{goods.price}}</text></view></view>
+        <view class="order-delivery"><text wx:if="{{item.deliveryType === 'pickup'}}">到店自取</text><text wx:else>送货上门</text><text wx:if="{{item.deliveryTime}}"> · {{item.deliveryTime.date}} {{item.deliveryTime.timeSlot}}</text></view>
+        <view class="order-footer"><text class="order-time">{{item.createTimeText}}</text><text class="order-total">¥{{item.priceDetail.total}}</text></view>
+        <button wx:if="{{item.nextAction}}" class="btn-advance" catchtap="advanceOrder" data-id="{{item._id}}">{{item.nextAction}}</button>
       </view>
     </view>
+    <text class="empty-text" wx:else>暂无符合条件的订单</text>
   </view>
-
 </view>

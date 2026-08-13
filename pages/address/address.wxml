@@ -8,7 +8,7 @@
   </view>
 
   <scroll-view scroll-y class="address-list">
-    <view class="address-card {{item.isDefault ? 'default' : ''}}" wx:for="{{addresses}}" wx:key="id">
+    <view class="address-card {{item.isDefault ? 'default' : ''}}" wx:for="{{addresses}}" wx:key="id" bindtap="selectAddress" data-id="{{item.id}}">
       <view class="card-top">
         <view class="user-info">
           <text class="name">{{item.name}}</text>
@@ -21,7 +21,7 @@
       </view>
       
       <view class="card-bottom">
-        <view class="set-default" bindtap="setDefault" data-id="{{item.id}}" wx:if="{{!item.isDefault}}">
+        <view class="set-default" catchtap="setDefault" data-id="{{item.id}}" wx:if="{{!item.isDefault}}">
           <icon type="{{item.isSelected ? 'success' : 'circle'}}" size="18"/>
           <text>设为默认</text>
         </view>
@@ -31,10 +31,10 @@
         </view>
         
         <view class="actions">
-          <view class="action-btn edit" bindtap="editAddress" data-id="{{item.id}}">
+          <view class="action-btn edit" catchtap="editAddress" data-id="{{item.id}}">
             <text>编辑</text>
           </view>
-          <view class="action-btn delete" bindtap="deleteAddress" data-id="{{item.id}}">
+          <view class="action-btn delete" catchtap="deleteAddress" data-id="{{item.id}}">
             <text>删除</text>
           </view>
         </view>

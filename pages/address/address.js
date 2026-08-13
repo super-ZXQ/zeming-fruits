@@ -1,6 +1,11 @@
 Page({
   data: {
-    addresses: []
+    addresses: [],
+    selectMode: false
+  },
+
+  onLoad(options) {
+    this.setData({ selectMode: options.select === '1' })
   },
 
   onShow() {
@@ -33,6 +38,12 @@ Page({
     wx.navigateTo({
       url: `/pages/address/add?id=${e.currentTarget.dataset.id}`
     })
+  },
+
+  selectAddress(e) {
+    if (!this.data.selectMode) return
+    wx.setStorageSync('checkoutAddressId', e.currentTarget.dataset.id)
+    wx.navigateBack()
   },
 
   deleteAddress(e) {

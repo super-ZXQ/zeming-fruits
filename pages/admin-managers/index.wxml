@@ -28,7 +28,7 @@
     <view class="section-title">添加新管理员</view>
     <view class="form-item">
       <text class="label">用户手机号</text>
-      <input class="input" placeholder="请从上方搜索选择用户" value="{{selectedUserPhone}}" bindinput="onAdminIdInput" disabled="{{true}}" />
+      <input class="input" placeholder="请从上方搜索选择用户" value="{{selectedUserPhone}}" disabled="{{true}}" />
       <text class="selected-name" wx:if="{{selectedUserName}}">已选择：{{selectedUserName}}</text>
     </view>
     <view class="form-item">

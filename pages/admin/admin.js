@@ -30,6 +30,14 @@ Page({
     if (this.data.authorized) this.loadProducts()
   },
 
+  goToDashboard() {
+    wx.navigateTo({ url: '/pages/admin-dashboard/index' })
+  },
+
+  goToManagers() {
+    wx.navigateTo({ url: '/pages/admin-managers/index' })
+  },
+
   async checkAdmin() {
     try {
       const result = await wx.cloud.callFunction({ name: 'adminAuth' })

@@ -9,5 +9,5 @@
     }
   ],
   "read": "auth.openid == '{openid}'",
-  "write": "auth.openid == '{openid}'"
+  "write": false
 }

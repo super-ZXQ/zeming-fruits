@@ -1,5 +1,5 @@
 <view class="container">
-  <view class="header"><text class="header-title">商品管理</text><text class="header-count">共 {{products.length}} 件商品 · 可改价与上下架</text></view>
+  <view class="header"><view><text class="header-title">商品管理</text><text class="header-count">共 {{products.length}} 件商品 · 可改价与上下架</text></view><view class="header-actions"><text class="header-action" bindtap="goToDashboard">订单</text><text class="header-action" bindtap="goToManagers">账号</text></view></view>
   <view class="product-list" wx:if="{{products.length > 0}}">
     <view class="product-item" wx:for="{{products}}" wx:key="_id" bindtap="editProduct" data-id="{{item._id}}">
       <view class="product-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" class="product-img" binderror="onImageError" data-index="{{index}}"></image><view wx:else class="product-placeholder"><text class="placeholder-text">🍎</text></view></view>

@@ -1,5 +1,3 @@
-const db = wx.cloud.database()
-
 Page({
   data: {
     excelFile: null,
@@ -72,7 +70,7 @@ Page({
           excelName: file.name,
           excelSize: that.formatFileSize(file.size)
         })
-        that.parseExcel(file.path)
+        that.parseExcel(file.path, file.name)
       },
       fail(err) {
         console.error('选择文件失败:', err)
@@ -90,14 +88,19 @@ Page({
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
   },
 
-  async parseExcel(filePath) {
+  async parseExcel(filePath, fileName) {
     wx.showLoading({ title: '解析中...', mask: true })
     
     try {
+      const suffix = (fileName || filePath).split('.').pop().toLowerCase()
+      const upload = await wx.cloud.uploadFile({
+        cloudPath: `imports/${Date.now()}.${suffix}`,
+        filePath
+      })
       const res = await wx.cloud.callFunction({
         name: 'parseExcel',
         data: {
-          fileUrl: filePath
+          fileUrl: upload.fileID
         }
       })
       
@@ -117,22 +120,9 @@ Page({
     } catch (err) {
       wx.hideLoading()
       console.error('解析Excel失败:', err)
-      
-      const mockData = this.getMockPreviewData()
-      this.setData({ previewData: mockData })
-      wx.showToast({
-        title: '使用示例数据预览',
-        icon: 'none'
-      })
+      this.setData({ previewData: [] })
+      wx.showToast({ title: err.message || '解析失败，请检查 Excel 格式', icon: 'none' })
     }
-  },
-
-  getMockPreviewData() {
-    return [
-      { name: '红富士苹果', price: 9.9, originalPrice: 15.8, unit: '斤', category: '精品水果', tag: '热销' },
-      { name: '奶油草莓', price: 15.0, originalPrice: 29.9, unit: '份', category: '草莓樱桃', tag: '特价' },
-      { name: '智利车厘子', price: 68.0, originalPrice: 99.9, unit: '份', category: '进口水果', tag: '进口' }
-    ]
   },
 
   chooseImage() {
@@ -250,12 +240,11 @@ Page({
         tag: newProduct.tag || '',
         imageUrl: newProduct.imageUrl || '',
         sales: 0,
-        status: 'active',
-        createTime: db.serverDate(),
-        updateTime: db.serverDate()
+        status: 'active'
       }
       
-      await db.collection('products').add({ data: productData })
+      const result = await wx.cloud.callFunction({ name: 'adminProducts', data: { action: 'save', product: productData } })
+      if (!result.result || !result.result.success) throw new Error('发布失败')
       
       wx.hideLoading()
       wx.showToast({ title: '发布成功', icon: 'success' })
@@ -316,12 +305,11 @@ Page({
           tag: item.tag || '',
           imageUrl: item.imageUrl || '',
           sales: 0,
-          status: 'active',
-          createTime: db.serverDate(),
-          updateTime: db.serverDate()
+          status: 'active'
         }
         
-        await db.collection('products').add({ data: productData })
+        const result = await wx.cloud.callFunction({ name: 'adminProducts', data: { action: 'save', product: productData } })
+        if (!result.result || !result.result.success) throw new Error('导入失败')
         success++
       } catch (err) {
         console.error('导入商品失败:', err)

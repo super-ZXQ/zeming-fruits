@@ -7,7 +7,7 @@ App({
   },
 
   onLaunch() {
-    if (wx.cloud) wx.cloud.init({ env: 'cloud1-d2gkep1yz4b62ba1e', traceUser: true })
+    if (wx.cloud) wx.cloud.init({ env: 'cloud1-3g1f8ehxdf89c874', traceUser: true })
     this.loadCartFromStorage()
     this.restoreSession()
   },

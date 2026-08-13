@@ -10,13 +10,9 @@
     "pages/address/add",
     "pages/login/login",
     "pages/admin/admin",
-    "pages/coupon-admin/create",
-    "pages/coupon-admin/list",
-    "pages/order/pay",
+    "pages/order/confirm",
     "pages/admin-dashboard/index",
-    "pages/admin-managers/index",
-    "pages/admin-product/batch-import",
-    "pages/admin-settings/index"
+    "pages/admin-managers/index"
   ],
   "permission": {
     "scope.userLocation": {
@@ -24,10 +20,7 @@
     }
   },
   "requiredPrivateInfos": [
-    "chooseAddress",
-    "chooseLocation",
-    "getLocation",
-    "getPhoneNumber"
+    "chooseLocation"
   ],
   "window": {
     "backgroundTextStyle": "dark",
@@ -50,7 +43,7 @@
       },
       {
         "pagePath": "pages/cart/cart",
-        "text": "购物车"
+        "text": "预约单"
       },
       {
         "pagePath": "pages/mine/mine",

@@ -10,7 +10,8 @@ Page({
       { id: 'snacks', name: '休闲零食', icon: 'snack' }
     ],
     products: [],
-    loading: true
+    loading: true,
+    loadError: ''
   },
 
   onShow() {
@@ -36,7 +37,7 @@ Page({
   },
 
   async loadProducts() {
-    this.setData({ loading: true })
+    this.setData({ loading: true, loadError: '' })
     try {
       const res = await wx.cloud.database().collection('products')
         .orderBy('sales', 'desc')
@@ -60,7 +61,7 @@ Page({
       })
     } catch (err) {
       console.error('加载商品失败:', err)
-      this.setData({ products: [], loading: false })
+      this.setData({ products: [], loading: false, loadError: '鲜果加载失败，请检查网络后重试' })
     }
   },
 
@@ -87,7 +88,8 @@ Page({
     wx.showToast({ title: '已加入预约单', icon: 'success' })
   },
 
-  shareApp() {
-    wx.showShareMenu({ withShareTicket: true, menus: ['shareAppMessage', 'shareTimeline'] })
-  }
+  retryLoad() { this.loadProducts() },
+  onImageError(e) { this.setData({ [`products[${e.currentTarget.dataset.index}].imageUrl`]: '' }) },
+  onShareAppMessage() { return { title: '泽明果业｜每日鲜果线上预约', path: '/pages/index/index', imageUrl: '/images/store-logo.jpg' } },
+  onShareTimeline() { return { title: '泽明果业｜每日鲜果线上预约', imageUrl: '/images/store-logo.jpg' } }
 })

@@ -31,15 +31,15 @@
         <view class="tab-icon pending-icon"></view>
         <text>待确认</text>
       </view>
-      <view class="order-tab" bindtap="goToOrders" data-status="confirmed">
+      <view class="order-tab" bindtap="goToOrders" data-status="active">
         <view class="tab-icon confirmed-icon"></view>
-        <text>已确认</text>
+        <text>进行中</text>
       </view>
       <view class="order-tab" bindtap="goToOrders" data-status="completed">
         <view class="tab-icon completed-icon"></view>
         <text>已完成</text>
       </view>
-      <view class="order-tab" bindtap="goToOrders" data-status="refund">
+      <view class="order-tab" bindtap="goToOrders" data-status="after_sale">
         <view class="tab-icon service-icon"></view>
         <text>售后</text>
       </view>
@@ -50,11 +50,6 @@
     <view class="menu-item" bindtap="goToAddress">
       <view class="menu-icon address-icon"></view>
       <text class="menu-label">收货地址</text>
-      <text class="arrow">›</text>
-    </view>
-    <view class="menu-item" bindtap="goToCoupons">
-      <view class="menu-icon coupon-icon"></view>
-      <text class="menu-label">优惠券</text>
       <text class="arrow">›</text>
     </view>
     <view class="menu-item" bindtap="contactService">

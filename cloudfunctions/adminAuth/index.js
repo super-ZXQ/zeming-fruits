@@ -1,40 +1,17 @@
 const cloud = require('wx-server-sdk')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
-
 const db = cloud.database()
-
-async function getAdminIdentity(openid) {
-  const admins = await db.collection('admins').get()
-  const configuredAdmin = admins.data.some(item =>
-    Array.isArray(item.adminOpenids) && item.adminOpenids.includes(openid)
-  )
-
-  if (configuredAdmin) {
-    return { isAdmin: true, role: 'owner' }
-  }
-
-  const users = await db.collection('users').where({ _openid: openid }).limit(1).get()
-  const phone = users.data[0] && users.data[0].phone
-  if (!phone) return { isAdmin: false, role: 'normal' }
-
-  try {
-    const managers = await db.collection('managers').where({ phone }).limit(1).get()
-    const manager = managers.data[0]
-    if (manager && manager.status === 'active') {
-      return { isAdmin: true, role: manager.role || 'staff' }
-    }
-  } catch (err) {
-    console.warn('管理员手机号表不可用:', err.message)
-  }
-
-  return { isAdmin: false, role: 'normal' }
-}
 
 exports.main = async () => {
   const { OPENID } = cloud.getWXContext()
-  const identity = await getAdminIdentity(OPENID)
-  return { success: true, ...identity }
-}
+  const admins = await db.collection('admins').get().catch(() => ({ data: [] }))
+  const isOwner = admins.data.some(item => Array.isArray(item.adminOpenids) && item.adminOpenids.includes(OPENID))
+  if (isOwner) return { success: true, isAdmin: true, role: 'owner' }
 
-exports.getAdminIdentity = getAdminIdentity
+  const result = await db.collection('managers').where({ openid: OPENID, status: 'active' }).limit(1).get().catch(() => ({ data: [] }))
+  const manager = result.data[0]
+  return manager
+    ? { success: true, isAdmin: true, role: manager.role || 'staff' }
+    : { success: true, isAdmin: false, role: 'normal' }
+}

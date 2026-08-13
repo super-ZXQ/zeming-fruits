@@ -1,13 +1,6 @@
 {
-  "env": [
-    {
-      "type": "ALL",
-      "value": {
-        "read": true,
-        "write": true
-      }
-    }
-  ],
-  "read": "auth.openid == '{openid}'",
-  "write": false
+  "create": false,
+  "read": "auth.openid == doc._openid",
+  "update": false,
+  "delete": false
 }

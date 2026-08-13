@@ -1,60 +1,38 @@
 App({
   globalData: {
     userInfo: null,
-    token: null,
-    cart: [],
-    shopSettings: null
+    isAdmin: false,
+    adminRole: 'normal',
+    cart: []
   },
 
   onLaunch() {
-    // 初始化云开发环境
-    if (wx.cloud) {
-      wx.cloud.init({
-        traceUser: true
-      })
-      console.log('云开发初始化成功')
-    }
-    
-    this.loadCartFromStorage();
-    this.checkLoginStatus();
-    this.loadShopSettings();
+    if (wx.cloud) wx.cloud.init({ traceUser: true })
+    this.loadCartFromStorage()
+    this.restoreSession()
   },
 
   onShow() {
-    this.updateCartBadge();
+    this.updateCartBadge()
   },
 
   loadCartFromStorage() {
     try {
-      const cart = wx.getStorageSync('cart') || [];
-      this.globalData.cart = cart;
-    } catch (e) {
-      console.log('加载购物车失败', e);
+      this.globalData.cart = wx.getStorageSync('cart') || []
+    } catch (err) {
+      this.globalData.cart = []
     }
   },
 
   saveCartToStorage() {
-    try {
-      wx.setStorageSync('cart', this.globalData.cart);
-    } catch (e) {
-      console.log('保存购物车失败', e);
-    }
+    wx.setStorageSync('cart', this.globalData.cart)
   },
 
-  addToCart(product, count) {
-    count = count || 1;
-    const cart = this.globalData.cart;
-    let existingItem = null;
-    
-    for (let i = 0; i < cart.length; i++) {
-      if (cart[i].id === product.id) {
-        existingItem = cart[i];
-        break;
-      }
-    }
-    
-    if (existingItem) {
-      existingItem.count += count;
+  addToCart(product, count = 1) {
+    const cart = this.globalData.cart
+    const existing = cart.find(item => item.id === product.id)
+    if (existing) {
+      existing.count = Math.min(99, existing.count + count)
     } else {
       cart.push({
         id: product.id,
@@ -63,71 +41,62 @@ App({
         emoji: product.emoji || '🍎',
         description: product.description || '',
         imageUrl: product.imageUrl || '',
-        count: count,
+        count: Math.min(99, count),
         selected: true
-      });
+      })
     }
-    
-    this.saveCartToStorage();
-    this.updateCartBadge();
+    this.saveCartToStorage()
+    this.updateCartBadge()
   },
 
   updateCartBadge() {
-    let totalCount = 0;
-    const cart = this.globalData.cart;
-    for (let i = 0; i < cart.length; i++) {
-      totalCount += cart[i].count;
-    }
-    if (totalCount > 0) {
-      wx.setTabBarBadge({
-        index: 2,
-        text: totalCount > 99 ? '99+' : String(totalCount)
-      });
-    } else {
-      wx.removeTabBarBadge({
-        index: 2
-      });
-    }
+    const total = this.globalData.cart.reduce((sum, item) => sum + (Number(item.count) || 0), 0)
+    if (total > 0) wx.setTabBarBadge({ index: 2, text: total > 99 ? '99+' : String(total) })
+    else wx.removeTabBarBadge({ index: 2 })
   },
 
-  checkLoginStatus() {
+  restoreSession() {
+    if (wx.getStorageSync('sessionDisabled')) return
+    const cached = wx.getStorageSync('userInfo')
+    if (!cached) return
+    this.globalData.userInfo = cached
+    this.refreshSession()
+  },
+
+  async refreshSession() {
     try {
-      const userInfo = wx.getStorageSync('userInfo');
-      const token = wx.getStorageSync('token');
-      if (userInfo && token) {
-        this.globalData.userInfo = userInfo;
-        this.globalData.token = token;
+      const result = await wx.cloud.callFunction({ name: 'userLogin', data: { action: 'session' } })
+      if (!result.result || !result.result.success || !result.result.user) {
+        this.clearSession(false)
+        return null
       }
-    } catch (e) {
-      console.log('检查登录状态失败', e);
-    }
-  },
-
-  setUserInfo(userInfo, token) {
-    this.globalData.userInfo = userInfo;
-    this.globalData.token = token;
-    
-    wx.setStorageSync('userInfo', userInfo);
-    wx.setStorageSync('token', token);
-  },
-
-  async loadShopSettings() {
-    try {
-      const db = wx.cloud.database()
-      const res = await db.collection('settings').doc('homepage').get()
-      
-      if (res.data) {
-        this.globalData.shopSettings = {
-          notices: res.data.notices,
-          deliveryTip: res.data.deliveryTip,
-          shopName: res.data.shopName,
-          shopAddress: res.data.shopAddress,
-          shopPhone: res.data.shopPhone,
-          businessHours: res.data.businessHours
-        }
-      }
+      this.setSession(result.result.user, result.result)
+      return result.result
     } catch (err) {
-      console.log('加载店铺设置失败，使用默认值:', err)
+      return null
     }
+  },
+
+  setSession(user, identity = {}) {
+    this.globalData.userInfo = user
+    this.globalData.isAdmin = !!identity.isAdmin
+    this.globalData.adminRole = identity.role || 'normal'
+    wx.setStorageSync('userInfo', user)
+    wx.setStorageSync('isAdmin', this.globalData.isAdmin)
+    wx.setStorageSync('adminRole', this.globalData.adminRole)
+    wx.removeStorageSync('sessionDisabled')
+  },
+
+  clearSession(disable = true) {
+    this.globalData.userInfo = null
+    this.globalData.isAdmin = false
+    this.globalData.adminRole = 'normal'
+    wx.removeStorageSync('userInfo')
+    wx.removeStorageSync('isAdmin')
+    wx.removeStorageSync('adminRole')
+    wx.removeStorageSync('userPhone')
+    wx.removeStorageSync('userId')
+    wx.removeStorageSync('token')
+    if (disable) wx.setStorageSync('sessionDisabled', true)
   }
-});
+})

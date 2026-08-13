@@ -1,93 +1,31 @@
 Page({
   data: {
-    currentStatus: 'all',
-    orders: [],
-    pendingCount: 0,
-    statusText: {
-      pending: '待确认',
-      confirmed: '已确认',
-      preparing: '备货中',
-      delivering: '配送中',
-      completed: '已完成',
-      refund: '售后中',
-      cancelled: '已取消'
-    }
+    currentStatus: 'all', allOrders: [], orders: [], pendingCount: 0, loading: true, loadError: '',
+    statusText: { pending: '待确认', confirmed: '已确认', preparing: '备货中', ready: '待取货', delivering: '配送中', completed: '已完成', after_sale: '售后中', refund: '售后中', cancelled: '已取消' }
   },
-
-  onLoad(options) {
-    this.setData({ currentStatus: options.status || 'all' })
-  },
-
-  onShow() {
-    this.loadOrders()
-  },
-
+  onLoad(options) { this.setData({ currentStatus: options.status || 'all' }) },
+  onShow() { this.loadOrders() },
   async loadOrders() {
+    this.setData({ loading: true, loadError: '' })
     try {
-      const db = wx.cloud.database()
-      const res = await db.collection('orders')
-        .orderBy('createTime', 'desc')
-        .limit(50)
-        .get()
-
-      const allOrders = res.data.map(order => this.normalizeOrder(order))
-      const currentStatus = this.data.currentStatus
-      const orders = currentStatus === 'all'
-        ? allOrders
-        : allOrders.filter(order => order.status === currentStatus)
-
-      this.setData({
-        orders,
-        pendingCount: allOrders.filter(order => order.status === 'pending').length
-      })
-    } catch (err) {
-      console.error('加载订单失败:', err)
-      wx.showToast({ title: '订单加载失败', icon: 'none' })
-    }
+      const result = await wx.cloud.database().collection('orders').orderBy('createTime', 'desc').limit(100).get()
+      const allOrders = result.data.map(order => this.normalizeOrder(order))
+      this.setData({ allOrders, pendingCount: allOrders.filter(order => order.status === 'pending').length, loading: false })
+      this.applyFilter()
+    } catch (err) { this.setData({ loading: false, loadError: '订单加载失败，请检查网络后重试', orders: [] }) }
   },
-
+  applyFilter() {
+    const { allOrders, currentStatus } = this.data
+    const active = ['confirmed', 'preparing', 'ready', 'delivering']
+    const orders = allOrders.filter(order => currentStatus === 'all' || (currentStatus === 'active' && active.includes(order.status)) || (currentStatus === 'after_sale' && ['after_sale', 'refund'].includes(order.status)) || order.status === currentStatus)
+    this.setData({ orders })
+  },
   normalizeOrder(order) {
-    const priceDetail = order.priceDetail || {}
-    const totalAmount = priceDetail.total !== undefined
-      ? priceDetail.total
-      : (order.finalAmount !== undefined ? order.finalAmount : (order.totalAmount || 0))
-
-    return {
-      ...order,
-      id: order._id || order.id,
-      status: order.status,
-      items: (order.goods || order.items || []).map(item => ({
-        ...item,
-        count: item.quantity || item.count || 1
-      })),
-      totalAmount,
-      createTime: this.formatTime(order.createTime)
-    }
+    const price = order.priceDetail || {}
+    return { ...order, id: order._id || order.id, items: (order.goods || order.items || []).map(item => ({ ...item, count: item.quantity || item.count || 1 })), totalAmount: price.total !== undefined ? price.total : (order.finalAmount || order.totalAmount || 0), createTimeText: this.formatTime(order.createTime), modeText: order.deliveryType === 'pickup' ? '到店自取' : '送货上门' }
   },
-
-  formatTime(value) {
-    if (!value) return ''
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return ''
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hour = String(date.getHours()).padStart(2, '0')
-    const minute = String(date.getMinutes()).padStart(2, '0')
-    return `${month}-${day} ${hour}:${minute}`
-  },
-
-  switchTab(e) {
-    this.setData({ currentStatus: e.currentTarget.dataset.status })
-    this.loadOrders()
-  },
-
-  goToDetail(e) {
-    wx.navigateTo({
-      url: '/pages/orderDetail/orderDetail?id=' + e.currentTarget.dataset.id
-    })
-  },
-
-  goShopping() {
-    wx.switchTab({ url: '/pages/index/index' })
-  }
+  formatTime(value) { if (!value) return ''; const date = new Date(value); const pad = item => String(item).padStart(2, '0'); return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}` },
+  switchTab(e) { this.setData({ currentStatus: e.currentTarget.dataset.status }); this.applyFilter() },
+  goToDetail(e) { wx.navigateTo({ url: `/pages/orderDetail/orderDetail?id=${e.currentTarget.dataset.id}` }) },
+  goShopping() { wx.switchTab({ url: '/pages/index/index' }) }
 })

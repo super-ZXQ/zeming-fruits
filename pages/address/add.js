@@ -20,45 +20,15 @@ Page({
     if (options.id) {
       this.setData({ editId: options.id })
       this.loadAddress(options.id)
-    } else {
-      this.getCurrentLocation()
-    }
-  },
-
-  async getCurrentLocation() {
-    wx.showLoading({ title: '定位中...', mask: true })
-    
-    try {
-      const res = await new Promise((resolve, reject) => {
-        wx.getLocation({
-          type: 'gcj02',
-          success: resolve,
-          fail: reject
-        })
-      })
-      
-      this.setData({
-        latitude: res.latitude,
-        longitude: res.longitude
-      })
-      
-      this.updateDistance(res.latitude, res.longitude)
-      
-      this.chooseLocation()
-    } catch (err) {
-      wx.hideLoading()
-      console.log('获取位置失败:', err)
-      this.chooseLocation()
     }
   },
 
   async loadAddress(id) {
     try {
-      const db = wx.cloud.database()
-      const res = await db.collection('addresses').doc(id).get()
+      const res = await wx.cloud.callFunction({ name: 'customerProfile', data: { action: 'get', id } })
+      const addr = res.result && res.result.address
       
-      if (res.data) {
-        const addr = res.data
+      if (addr) {
         this.setData({
           poiName: addr.name || '',
           latitude: addr.latitude,
@@ -117,8 +87,6 @@ Page({
       latitude: this.data.latitude,
       longitude: this.data.longitude,
       success: (res) => {
-        console.log('选择位置成功:', res)
-        
         this.setData({
           poiName: res.name || '',
           latitude: res.latitude,
@@ -137,7 +105,6 @@ Page({
         this.checkCanSave()
       },
       fail: (err) => {
-        console.log('选择位置失败:', err)
         if (!this.data.poiName) {
           wx.showToast({ title: '请选择位置', icon: 'none' })
         }
@@ -194,12 +161,7 @@ Page({
   parsePasteText() {
     const text = this.data.pasteText.trim()
     if (!text) {
-      wx.getClipboardData({
-        success: (res) => {
-          this.setData({ pasteText: res.clipboardData })
-          this.parseAddressText(res.clipboardData)
-        }
-      })
+      wx.showToast({ title: '请先粘贴地址文字', icon: 'none' })
     } else {
       this.parseAddressText(text)
     }
@@ -240,7 +202,7 @@ Page({
     wx.showActionSheet({
       itemList: ['+86 中国', '+852 香港', '+853 澳门', '+886 台湾'],
       success: (res) => {
-        console.log('选择区号:', res.tapIndex)
+        if (res.tapIndex > 0) wx.showToast({ title: '首版仅支持中国大陆手机号', icon: 'none' })
       }
     })
   },
@@ -254,7 +216,6 @@ Page({
     wx.showLoading({ title: '保存中...', mask: true })
     
     try {
-      const db = wx.cloud.database()
       const addressData = {
         name: this.data.poiName,
         address: this.data.detailAddress,
@@ -264,20 +225,10 @@ Page({
         phone: this.data.phone,
         tags: this.data.selectedTags,
         latitude: this.data.latitude,
-        longitude: this.data.longitude,
-        updatedAt: db.serverDate()
+        longitude: this.data.longitude
       }
-      
-      if (this.data.editId) {
-        await db.collection('addresses').doc(this.data.editId).update({
-          data: addressData
-        })
-      } else {
-        const countRes = await db.collection('addresses').count()
-        addressData.isDefault = countRes.total === 0
-        addressData.createdAt = db.serverDate()
-        await db.collection('addresses').add({ data: addressData })
-      }
+      const result = await wx.cloud.callFunction({ name: 'customerProfile', data: { action: 'save', id: this.data.editId, address: addressData } })
+      if (!result.result || !result.result.success) throw new Error('保存失败')
       
       wx.hideLoading()
       wx.showToast({ title: '保存成功', icon: 'success' })

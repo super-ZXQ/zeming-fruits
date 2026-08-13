@@ -1,0 +1,6 @@
+{
+  "create": false,
+  "read": "auth.openid == doc._openid",
+  "update": false,
+  "delete": false
+}

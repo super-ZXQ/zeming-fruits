@@ -5,7 +5,7 @@
         <view class="brand-mark"><view class="leaf leaf-one"></view><view class="leaf leaf-two"></view></view>
         <view><text class="brand-name">泽明果业</text><text class="brand-subtitle">每日鲜果 · 线上预约</text></view>
       </view>
-      <view class="share-btn" bindtap="shareApp"><view class="icon-share"></view></view>
+      <button class="share-btn" open-type="share"><view class="icon-share"></view></button>
     </view>
     <view class="service-card">
       <view class="service-icon"><view class="icon-truck"></view></view>
@@ -27,12 +27,13 @@
 
     <view class="product-grid" wx:if="{{products.length > 0}}">
       <view class="product-card" wx:for="{{products}}" wx:key="id">
-        <view class="product-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill"></image><text wx:else>{{item.emoji}}</text><view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view></view>
+        <view class="product-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image><text wx:else>{{item.emoji}}</text><view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view></view>
         <view class="product-info"><text class="product-name">{{item.name}}</text><text class="product-desc">{{item.description || '新鲜备货'}}</text><view class="product-bottom"><view><text class="product-price">¥{{item.price}}</text><text class="product-original" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text></view><view class="add-btn" bindtap="addToCart" data-item="{{item}}"><view class="icon-plus"></view></view></view></view>
       </view>
     </view>
 
-    <view class="product-empty" wx:if="{{!loading && products.length === 0}}"><view class="empty-fruit">🍐</view><text>鲜果正在上新</text><text>稍后再来看看吧</text></view>
+    <view class="product-empty" wx:if="{{!loading && !loadError && products.length === 0}}"><view class="empty-fruit">🍐</view><text>鲜果正在上新</text><text>稍后再来看看吧</text></view>
+    <view class="product-empty" wx:if="{{loadError}}"><text>{{loadError}}</text><view class="retry-btn" bindtap="retryLoad">重新加载</view></view>
     <view class="loading-state" wx:if="{{loading}}">正在挑选今日鲜果…</view>
   </view>
 </view>

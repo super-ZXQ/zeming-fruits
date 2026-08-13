@@ -16,7 +16,8 @@ Page({
     currentCategoryName: '精品水果',
     cartCount: 0,
     cartTotal: '0.00',
-    loading: false
+    loading: false,
+    loadError: ''
   },
 
   onLoad() {
@@ -38,7 +39,7 @@ Page({
 
   async loadProducts(categoryId) {
     const category = this.data.categories.find(item => item.id === categoryId) || this.data.categories[0]
-    this.setData({ loading: true, currentCategory: category.id, currentCategoryName: category.name });
+    this.setData({ loading: true, loadError: '', currentCategory: category.id, currentCategoryName: category.name });
     
     try {
       const db = wx.cloud.database();
@@ -109,13 +110,17 @@ Page({
       }
     } catch (err) {
       console.error('加载商品失败:', err);
-      this.setData({ products: [], loading: false });
+      this.setData({ products: [], loading: false, loadError: '鲜果加载失败，请检查网络后重试' });
     }
   },
 
   switchCategory(e) {
     const categoryId = e.currentTarget.dataset.id;
     this.loadProducts(categoryId);
+  },
+
+  retryLoad() {
+    this.loadProducts(this.data.currentCategory)
   },
 
   addToCart(e) {
@@ -137,6 +142,10 @@ Page({
       icon: 'success',
       duration: 1000
     });
+  },
+
+  onImageError(e) {
+    this.setData({ [`products[${e.currentTarget.dataset.index}].imageUrl`]: '' })
   },
 
   updateCartInfo() {

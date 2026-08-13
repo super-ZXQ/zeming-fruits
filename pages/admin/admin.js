@@ -5,6 +5,7 @@ Page({
     products: [],
     loading: true,
     authorized: false,
+    adminRole: 'normal',
     showModal: false,
     isEdit: false,
     categories: [
@@ -44,7 +45,7 @@ Page({
       const authorized = !!(result.result && result.result.isAdmin)
       wx.setStorageSync('isAdmin', authorized)
       if (!authorized) throw new Error('您不是管理员，无法访问此页面')
-      this.setData({ authorized })
+      this.setData({ authorized, adminRole: result.result.role || 'staff' })
       this.loadProducts()
     } catch (err) {
       wx.showModal({

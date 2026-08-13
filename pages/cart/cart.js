@@ -8,6 +8,51 @@ Page({
 
   onShow: function() {
     this.loadCart();
+    this.refreshProducts();
+  },
+
+  refreshProducts: async function() {
+    var app = getApp();
+    var cart = app.globalData.cart || [];
+    if (!cart.length) return;
+
+    try {
+      var db = wx.cloud.database();
+      var results = await Promise.all(cart.map(function(item) {
+        return db.collection('products').doc(item.id).get().catch(function() { return null; });
+      }));
+      var unavailableCount = 0;
+      var priceChangedCount = 0;
+      cart.forEach(function(item, index) {
+        var product = results[index] && results[index].data;
+        var unavailable = !product || product.status === 'inactive' || product.status === 'soldout';
+        item.unavailable = unavailable;
+        item.priceChanged = false;
+        if (unavailable) {
+          item.selected = false;
+          unavailableCount += 1;
+          return;
+        }
+        if (Number(item.price) !== Number(product.price)) {
+          item.price = product.price;
+          item.priceChanged = true;
+          priceChangedCount += 1;
+        }
+        item.name = product.name;
+        item.imageUrl = product.imageUrl || '';
+        item.emoji = product.emoji || item.emoji || '🍎';
+      });
+      app.saveCartToStorage();
+      this.loadCart();
+      if (unavailableCount || priceChangedCount) {
+        wx.showToast({
+          title: unavailableCount ? '下架商品已取消勾选' : '商品价格已更新',
+          icon: 'none'
+        });
+      }
+    } catch (err) {
+      wx.showToast({ title: '商品状态更新失败，请稍后重试', icon: 'none' });
+    }
   },
 
   loadCart: function() {
@@ -48,6 +93,10 @@ Page({
     var cart = app.globalData.cart;
     for (var i = 0; i < cart.length; i++) {
       if (cart[i].id === id) {
+        if (cart[i].unavailable) {
+          wx.showToast({ title: '该商品已下架', icon: 'none' });
+          return;
+        }
         cart[i].selected = !cart[i].selected;
         break;
       }
@@ -60,7 +109,7 @@ Page({
     var app = getApp();
     var cart = app.globalData.cart;
     for (var i = 0; i < cart.length; i++) {
-      cart[i].selected = allSelected;
+      cart[i].selected = !cart[i].unavailable && allSelected;
     }
     this.saveCart();
   },
@@ -71,6 +120,11 @@ Page({
     var cart = app.globalData.cart;
     for (var i = 0; i < cart.length; i++) {
       if (cart[i].id === id) {
+        if (cart[i].unavailable) return;
+        if (cart[i].count >= 99) {
+          wx.showToast({ title: '单个商品最多预约 99 份', icon: 'none' });
+          return;
+        }
         cart[i].count += 1;
         break;
       }
@@ -119,6 +173,16 @@ Page({
     wx.switchTab({ url: '/pages/index/index' });
   },
 
+  onImageError: function(e) {
+    var index = Number(e.currentTarget.dataset.index);
+    var app = getApp();
+    if (app.globalData.cart[index]) {
+      app.globalData.cart[index].imageUrl = '';
+      app.saveCartToStorage();
+      this.loadCart();
+    }
+  },
+
   goToCheckout: function() {
     if (this.data.selectedCount === 0) {
       wx.showToast({ title: '请选择商品', icon: 'none' });
@@ -140,6 +204,6 @@ Page({
       return;
     }
     
-    wx.navigateTo({ url: '/pages/order/pay' });
+    wx.navigateTo({ url: '/pages/order/confirm' });
   }
 });

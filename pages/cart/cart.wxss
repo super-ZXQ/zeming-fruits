@@ -39,6 +39,10 @@
   box-shadow: 0 8rpx 22rpx rgba(35, 61, 47, 0.05);
 }
 
+.cart-item.unavailable { opacity: 0.62; }
+.item-alert { margin-top: 5rpx; color: #d94a3d; font-size: 21rpx; }
+.item-alert.price-changed { color: #a36b16; }
+
 .checkbox {
   display: flex;
   flex-shrink: 0;

@@ -174,7 +174,6 @@
   background: #f0f5ef;
 }
 .address-icon:before { width: 19rpx; height: 24rpx; border: 3rpx solid #185c3a; border-radius: 15rpx 15rpx 15rpx 3rpx; transform: rotate(-45deg); }.address-icon:after { width: 6rpx; height: 6rpx; border-radius: 50%; background: #185c3a; }
-.coupon-icon:before { width: 29rpx; height: 19rpx; border: 3rpx solid #bd8b31; border-radius: 6rpx; }.coupon-icon:after { width: 3rpx; height: 13rpx; border-left: 3rpx dashed #bd8b31; }
 .phone-icon:before { width: 18rpx; height: 26rpx; border: 3rpx solid #b34d46; border-radius: 14rpx; transform: rotate(37deg); }
 .admin-icon:before { width: 24rpx; height: 24rpx; border: 3rpx solid #9a681d; border-radius: 50%; }.admin-icon:after { width: 7rpx; height: 7rpx; border-radius: 50%; background: #9a681d; }
 

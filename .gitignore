@@ -11,6 +11,8 @@ cloudfunctions/*/pay-config.json
 cloudfunctions/*/admin-config.json
 
 *.log
+preview-*.png
+preview-info.json
 
 .DS_Store
 Thumbs.db

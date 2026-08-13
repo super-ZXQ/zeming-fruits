@@ -7,7 +7,11 @@ Page({
 
   onShow: function() {
     this.checkLoginStatus()
-    this.checkAdminRole()
+    if (this.data.isLoggedIn) {
+      this.checkAdminRole()
+    } else {
+      this.setData({ isAdmin: false, adminRole: 'normal' })
+    }
     var app = getApp()
     if (app.updateCartBadge) {
       app.updateCartBadge()
@@ -65,10 +69,6 @@ Page({
     wx.navigateTo({ url: '/pages/address/address' });
   },
 
-  goToCoupons() {
-    wx.showToast({ title: '暂无可用优惠券', icon: 'none' });
-  },
-
   contactService: function() {
     wx.showModal({
       title: '联系客服',
@@ -95,14 +95,7 @@ Page({
       success: function(res) {
         if (res.confirm) {
           var app = getApp();
-          app.globalData.userInfo = null;
-          app.globalData.token = null;
-          wx.removeStorageSync('userInfo');
-          wx.removeStorageSync('token');
-          wx.removeStorageSync('isAdmin');
-          wx.removeStorageSync('adminRole');
-          wx.removeStorageSync('userPhone');
-          wx.removeStorageSync('userId');
+          app.clearSession();
           this$1.setData({
             isLoggedIn: false,
             userInfo: null,

@@ -1,6 +1,6 @@
 Page({
   data: {
-    searchKeyword: '', searchResults: [], selectedUserPhone: '', selectedUserName: '',
+    searchKeyword: '', searchResults: [], selectedUserId: '', selectedUserPhone: '', selectedUserName: '',
     roleIndex: 0, roles: [{ value: 'staff', label: '普通管理员' }, { value: 'super_admin', label: '超级管理员' }],
     managers: [], adding: false
   },
@@ -45,19 +45,19 @@ Page({
   },
 
   selectUser(e) {
-    const { phone, name } = e.currentTarget.dataset
-    this.setData({ selectedUserPhone: phone, selectedUserName: name || '微信用户', searchResults: [], searchKeyword: '' })
+    const { id, phone, name } = e.currentTarget.dataset
+    this.setData({ selectedUserId: id, selectedUserPhone: phone, selectedUserName: name || '微信用户', searchResults: [], searchKeyword: '' })
   },
 
   async addAdmin() {
-    const { selectedUserPhone, roles, roleIndex, adding } = this.data
+    const { selectedUserId, selectedUserPhone, roles, roleIndex, adding } = this.data
     if (adding || !selectedUserPhone) return
     this.setData({ adding: true })
     try {
       wx.showLoading({ title: '添加中', mask: true })
-      const result = await wx.cloud.callFunction({ name: 'adminManagers', data: { action: 'add', phone: selectedUserPhone, role: roles[roleIndex].value } })
+      const result = await wx.cloud.callFunction({ name: 'adminManagers', data: { action: 'add', userId: selectedUserId, role: roles[roleIndex].value } })
       if (!result.result || !result.result.success) throw new Error('添加失败')
-      this.setData({ selectedUserPhone: '', selectedUserName: '' })
+      this.setData({ selectedUserId: '', selectedUserPhone: '', selectedUserName: '' })
       wx.showToast({ title: '添加成功', icon: 'success' })
       this.loadManagers()
     } catch (err) {

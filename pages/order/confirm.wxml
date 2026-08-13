@@ -1,0 +1,61 @@
+<view class="container">
+  <view class="delivery-tabs">
+    <view class="tab {{deliveryType === 'pickup' ? 'active' : ''}}" bindtap="selectDeliveryType" data-type="pickup">到店自取</view>
+    <view class="tab {{deliveryType === 'delivery' ? 'active' : ''}}" bindtap="selectDeliveryType" data-type="delivery">送货上门</view>
+  </view>
+
+  <scroll-view scroll-y class="content">
+    <view class="service-note"><text>线上只提交预约，不在线付款</text><text>商品与时间由商家确认</text></view>
+
+    <view class="section" wx:if="{{deliveryType === 'pickup'}}">
+      <view class="section-title">自取门店</view>
+      <text class="store-name">泽明果业</text>
+      <text class="store-line">江苏省淮安市清江浦区济南路东冠逸景花苑 1 号楼 1-5.1-6 号</text>
+      <text class="store-line">营业时间：08:00–21:00 · 15250878388</text>
+      <view class="map-link" bindtap="openMap">查看地图导航 ›</view>
+    </view>
+
+    <view class="section" wx:if="{{deliveryType === 'delivery'}}">
+      <view class="section-head"><text class="section-title">收货地址</text><text class="rule">3km 内 ¥5</text></view>
+      <view class="address-card" bindtap="chooseAddress">
+        <view wx:if="{{address}}" class="address-content"><text class="contact">{{address.userName}}　{{address.telNumber}}</text><text class="address-detail">{{address.detailInfo}}</text></view>
+        <view wx:else class="address-empty">选择可定位的收货地址</view><text class="arrow">›</text>
+      </view>
+      <text class="range-tip" wx:if="{{quote && quote.deliveryType === 'delivery'}}">距门店 {{quote.distance}}km，配送费 ¥5</text>
+    </view>
+
+    <view class="section">
+      <view class="section-title">希望安排时间</view>
+      <view class="time-options">
+        <view class="time-option {{deliveryTimeType === 'asap' ? 'active' : ''}}" bindtap="selectDeliveryTime" data-time="asap"><text>尽快安排</text><text>由商家确认具体时间</text></view>
+        <view class="time-option {{deliveryTimeType === 'schedule' ? 'active' : ''}}" bindtap="selectDeliveryTime" data-time="schedule"><text>预约时间</text><text>{{scheduleDate}} {{timeSlots[scheduleTimeIndex]}}</text></view>
+      </view>
+      <view class="schedule" wx:if="{{deliveryTimeType === 'schedule'}}">
+        <picker mode="date" value="{{scheduleDate}}" start="{{minDate}}" bindchange="onScheduleDateChange"><view>日期 <text>{{scheduleDate}} ›</text></view></picker>
+        <picker mode="selector" range="{{timeSlots}}" value="{{scheduleTimeIndex}}" bindchange="onScheduleTimeChange"><view>时间段 <text>{{timeSlots[scheduleTimeIndex]}} ›</text></view></picker>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-head"><text class="section-title">商品清单</text><text class="muted">共 {{goodsCount}} 件</text></view>
+      <view class="goods-item" wx:for="{{goods}}" wx:key="id">
+        <view class="goods-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill"></image><text wx:else>{{item.emoji || '🍎'}}</text></view>
+        <view class="goods-info"><text class="goods-name">{{item.name}}</text><text class="goods-price">¥{{item.price}} / {{item.unit || '份'}}</text></view>
+        <text class="quantity">×{{item.quantity}}</text>
+      </view>
+      <view class="quote-error" wx:if="{{quoteError}}"><text>{{quoteError}}</text><view bindtap="loadQuote">重新加载</view></view>
+      <view class="quoting" wx:if="{{quoting}}">正在核对实时价格…</view>
+    </view>
+
+    <view class="section" wx:if="{{quote}}">
+      <view class="fee-row"><text>商品金额</text><text>¥{{quote.priceDetail.goodsTotal}}</text></view>
+      <view class="fee-row" wx:if="{{deliveryType === 'delivery'}}"><text>配送费</text><text>¥{{quote.priceDetail.deliveryFee}}</text></view>
+    </view>
+
+    <view class="section"><view class="section-title">备注</view><textarea class="remark" maxlength="200" placeholder="缺货或其他要求，商家会电话联系您" value="{{remark}}" bindinput="onRemarkInput"></textarea></view>
+    <view class="agreement" bindtap="toggleAgreement"><view class="check {{agreedTerms ? 'checked' : ''}}">{{agreedTerms ? '✓' : ''}}</view><text>我已阅读并同意</text><text class="link" catchtap="viewAgreement">《预约服务说明》</text></view>
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="footer"><view><text class="estimate">预估金额</text><text class="total">¥{{quote ? quote.priceDetail.total : '--'}}</text></view><button class="submit-btn {{!quote || !agreedTerms ? 'disabled' : ''}}" bindtap="submitOrder" loading="{{submitting}}">提交预约</button></view>
+</view>

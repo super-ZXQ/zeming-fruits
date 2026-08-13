@@ -14,10 +14,9 @@ Page({
 
   async loadAddresses() {
     try {
-      const res = await wx.cloud.database().collection('addresses')
-        .orderBy('createdAt', 'desc')
-        .get()
-      const addresses = res.data.map(item => ({
+      const res = await wx.cloud.callFunction({ name: 'customerProfile', data: { action: 'list' } })
+      if (!res.result || !res.result.success) throw new Error('地址加载失败')
+      const addresses = (res.result.addresses || []).map(item => ({
         ...item,
         id: item._id,
         name: item.contactName,
@@ -54,15 +53,8 @@ Page({
       success: async (res) => {
         if (!res.confirm) return
 
-        const deleted = this.data.addresses.find(item => item.id === id)
-        await wx.cloud.database().collection('addresses').doc(id).remove()
-
-        const remaining = this.data.addresses.filter(item => item.id !== id)
-        if (deleted && deleted.isDefault && remaining.length > 0) {
-          await wx.cloud.database().collection('addresses').doc(remaining[0].id).update({
-            data: { isDefault: true }
-          })
-        }
+        const result = await wx.cloud.callFunction({ name: 'customerProfile', data: { action: 'delete', id } })
+        if (!result.result || !result.result.success) throw new Error('删除失败')
 
         wx.showToast({ title: '删除成功', icon: 'success' })
         this.loadAddresses()
@@ -72,13 +64,8 @@ Page({
 
   async setDefault(e) {
     const id = e.currentTarget.dataset.id
-    const collection = wx.cloud.database().collection('addresses')
-
-    await Promise.all(this.data.addresses.map(item =>
-      collection.doc(item.id).update({
-        data: { isDefault: item.id === id }
-      })
-    ))
+    const result = await wx.cloud.callFunction({ name: 'customerProfile', data: { action: 'setDefault', id } })
+    if (!result.result || !result.result.success) return wx.showToast({ title: '设置失败', icon: 'none' })
 
     wx.showToast({ title: '已设为默认', icon: 'success' })
     this.loadAddresses()

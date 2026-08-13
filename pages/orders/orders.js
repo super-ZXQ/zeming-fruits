@@ -8,7 +8,9 @@ Page({
   async loadOrders() {
     this.setData({ loading: true, loadError: '' })
     try {
-      const result = await wx.cloud.database().collection('orders').orderBy('createTime', 'desc').limit(100).get()
+      const user = getApp().globalData.userInfo
+      if (!user || !user.openid) throw new Error('请先登录')
+      const result = await wx.cloud.database().collection('orders').where({ _openid: user.openid }).orderBy('createTime', 'desc').limit(100).get()
       const allOrders = result.data.map(order => this.normalizeOrder(order))
       this.setData({ allOrders, pendingCount: allOrders.filter(order => order.status === 'pending').length, loading: false })
       this.applyFilter()

@@ -20,7 +20,9 @@
 
 ## 首次部署
 
-1. 在微信开发者工具中关联云环境。
+正式云环境：`cloud1-d2gkep1yz4b62ba1e`。
+
+1. 在微信开发者工具中关联上述云环境。
 2. 部署上述云函数，选择“云端安装依赖”。
 3. 创建 `users`、`addresses`、`products`、`orders`、`settings`、`admins`、`managers` 集合。
 4. 按 `database/schema.json` 创建索引，尤其是 `orders(_openid, requestId)` 唯一索引。

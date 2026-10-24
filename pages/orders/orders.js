@@ -8,13 +8,15 @@ Page({
   async loadOrders() {
     this.setData({ loading: true, loadError: '' })
     try {
-      const user = getApp().globalData.userInfo
-      if (!user || !user.openid) throw new Error('请先登录')
-      const result = await wx.cloud.database().collection('orders').where({ _openid: user.openid }).orderBy('createTime', 'desc').limit(100).get()
-      const allOrders = result.data.map(order => this.normalizeOrder(order))
+      const result = await wx.cloud.callFunction({ name: 'customerOrders', data: { action: 'list' } })
+      if (!result.result || !result.result.success) throw new Error('订单加载失败')
+      const allOrders = (result.result.orders || []).map(order => this.normalizeOrder(order))
       this.setData({ allOrders, pendingCount: allOrders.filter(order => order.status === 'pending').length, loading: false })
       this.applyFilter()
-    } catch (err) { this.setData({ loading: false, loadError: '订单加载失败，请检查网络后重试', orders: [] }) }
+    } catch (err) {
+      console.error('订单列表加载失败:', err)
+      this.setData({ loading: false, loadError: err.message || '订单加载失败，请检查网络后重试', orders: [] })
+    }
   },
   applyFilter() {
     const { allOrders, currentStatus } = this.data

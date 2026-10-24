@@ -138,7 +138,7 @@ Page({
     this.updateCartInfo();
 
     wx.showToast({
-      title: '已加入预约单',
+      title: '已加入购物车',
       icon: 'success',
       duration: 1000
     });

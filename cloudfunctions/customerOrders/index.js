@@ -11,7 +11,16 @@ async function ownOrder(openid, id) {
 
 exports.main = async event => {
   const { OPENID } = cloud.getWXContext()
+  if (event.action === 'list') {
+    const result = await db.collection('orders').where({ _openid: OPENID }).orderBy('createTime', 'desc').limit(100).get()
+    return { success: true, orders: result.data }
+  }
+
   const order = await ownOrder(OPENID, event.id)
+
+  if (event.action === 'get') {
+    return { success: true, order }
+  }
 
   if (event.action === 'cancel') {
     if (order.status !== 'pending') throw new Error('商家确认后不能自行取消，请联系商家')

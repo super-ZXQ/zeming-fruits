@@ -39,7 +39,7 @@
     <view class="section">
       <view class="section-head"><text class="section-title">商品清单</text><text class="muted">共 {{goodsCount}} 件</text></view>
       <view class="goods-item" wx:for="{{goods}}" wx:key="id">
-        <view class="goods-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill"></image><text wx:else>{{item.emoji || '🍎'}}</text></view>
+        <view class="goods-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill"></image><text wx:else class="image-placeholder">暂无图片</text></view>
         <view class="goods-info"><text class="goods-name">{{item.name}}</text><text class="goods-price">¥{{item.price}} / {{item.unit || '份'}}</text></view>
         <text class="quantity">×{{item.quantity}}</text>
       </view>

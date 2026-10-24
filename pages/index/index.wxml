@@ -27,12 +27,12 @@
 
     <view class="product-grid" wx:if="{{products.length > 0}}">
       <view class="product-card" wx:for="{{products}}" wx:key="id">
-        <view class="product-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image><text wx:else>{{item.emoji}}</text><view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view></view>
+        <view class="product-image"><image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image><text wx:else class="image-placeholder">暂无图片</text><view class="product-tag" wx:if="{{item.tag}}">{{item.tag}}</view></view>
         <view class="product-info"><text class="product-name">{{item.name}}</text><text class="product-desc">{{item.description || '新鲜备货'}}</text><view class="product-bottom"><view><text class="product-price">¥{{item.price}}</text><text class="product-original" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text></view><view class="add-btn" bindtap="addToCart" data-item="{{item}}"><view class="icon-plus"></view></view></view></view>
       </view>
     </view>
 
-    <view class="product-empty" wx:if="{{!loading && !loadError && products.length === 0}}"><view class="empty-fruit">🍐</view><text>鲜果正在上新</text><text>稍后再来看看吧</text></view>
+    <view class="product-empty" wx:if="{{!loading && !loadError && products.length === 0}}"><text>鲜果正在上新</text><text>稍后再来看看吧</text></view>
     <view class="product-empty" wx:if="{{loadError}}"><text>{{loadError}}</text><view class="retry-btn" bindtap="retryLoad">重新加载</view></view>
     <view class="loading-state" wx:if="{{loading}}">正在挑选今日鲜果…</view>
   </view>

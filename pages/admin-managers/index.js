@@ -38,10 +38,12 @@ Page({
       const result = await wx.cloud.callFunction({ name: 'adminManagers', data: { action: 'search', keyword } })
       if (!result.result || !result.result.success) throw new Error('搜索失败')
       this.setData({ searchResults: result.result.users || [] })
+      wx.hideLoading()
       if (!(result.result.users || []).length) wx.showToast({ title: '未找到用户', icon: 'none' })
     } catch (err) {
+      wx.hideLoading()
       wx.showToast({ title: err.message || '搜索失败', icon: 'none' })
-    } finally { wx.hideLoading() }
+    }
   },
 
   selectUser(e) {
@@ -58,11 +60,13 @@ Page({
       const result = await wx.cloud.callFunction({ name: 'adminManagers', data: { action: 'add', userId: selectedUserId, role: roles[roleIndex].value } })
       if (!result.result || !result.result.success) throw new Error('添加失败')
       this.setData({ selectedUserId: '', selectedUserPhone: '', selectedUserName: '' })
+      wx.hideLoading()
       wx.showToast({ title: '添加成功', icon: 'success' })
       this.loadManagers()
     } catch (err) {
+      wx.hideLoading()
       wx.showToast({ title: err.message || '添加失败', icon: 'none' })
-    } finally { this.setData({ adding: false }); wx.hideLoading() }
+    } finally { this.setData({ adding: false }) }
   },
 
   async toggleAdmin(e) {

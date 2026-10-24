@@ -55,7 +55,14 @@ exports.main = async event => {
     return {
       success: true,
       ...list,
-      hotGoods: products.data.map(item => ({ _id: item._id, name: item.name, totalSales: item.sales || 0, totalRevenue: Number((Number(item.price || 0) * Number(item.sales || 0)).toFixed(2)) })),
+      hotGoods: products.data.map(item => ({
+        _id: item._id,
+        name: item.name,
+        imageUrl: item.imageUrl || '',
+        emoji: item.emoji || '🍎',
+        totalSales: item.sales || 0,
+        totalRevenue: Number((Number(item.price || 0) * Number(item.sales || 0)).toFixed(2))
+      })),
       stats: {
         todaySales: today.data.reduce((sum, order) => sum + Number(order.priceDetail && order.priceDetail.total || 0), 0).toFixed(2),
         todayOrders: today.data.length,

@@ -52,9 +52,11 @@ Page({
         page: page + 1,
         hasMore: !!result.result.hasMore
       })
+      wx.hideLoading()
     } catch (err) {
+      wx.hideLoading()
       wx.showToast({ title: err.message || '加载失败', icon: 'none' })
-    } finally { wx.hideLoading() }
+    }
   },
 
   filterOrders(e) {
@@ -63,10 +65,25 @@ Page({
   },
   loadMore() { if (this.data.hasMore) this.loadDashboard(false) },
 
+  onHotImageError(e) {
+    const hotGoods = this.data.hotGoods.slice()
+    const item = hotGoods[Number(e.currentTarget.dataset.index)]
+    if (item) item.imageUrl = ''
+    this.setData({ hotGoods })
+  },
+
+  onOrderImageError(e) {
+    const orders = this.data.orders.slice()
+    const order = orders[Number(e.currentTarget.dataset.orderIndex)]
+    const goods = order && order.goods && order.goods[Number(e.currentTarget.dataset.goodsIndex)]
+    if (goods) goods.imageUrl = ''
+    this.setData({ orders })
+  },
+
   async callOrderAction(action, id, extra = {}) {
     const result = await wx.cloud.callFunction({ name: 'adminOrders', data: { action, id, ...extra } })
     if (!result.result || !result.result.success) throw new Error('订单操作失败')
-    this.loadDashboard(true)
+    await this.loadDashboard(true)
   },
 
   async advanceOrder(e) {

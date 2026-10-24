@@ -4,11 +4,26 @@ Page({
     statusText: { pending: '待商家确认', confirmed: '已确认', preparing: '备货中', ready: '等待取货', delivering: '配送中', completed: '已完成', after_sale: '售后处理中', refund: '售后处理中', cancelled: '已取消' },
     statusDesc: { pending: '预约已提交，商家将尽快确认', confirmed: '商家已确认预约', preparing: '商家正在准备商品', ready: '商品已备好，请到店取货', delivering: '商品正在配送中', completed: '本次预约已完成', after_sale: '商家正在处理售后申请', refund: '商家正在处理售后申请', cancelled: '本次预约已取消' }
   },
-  onLoad(options) { this.setData({ orderId: options.id }) },
-  onShow() { this.loadOrderDetail() },
+  onLoad(options) { this.setData({ orderId: options.id || '' }) },
+  onShow() {
+    if (this.data.orderId) this.loadOrderDetail()
+    else {
+      wx.showToast({ title: '请从订单列表选择订单', icon: 'none' })
+      setTimeout(() => wx.redirectTo({ url: '/pages/orders/orders' }), 500)
+    }
+  },
   async loadOrderDetail() {
-    try { const result = await wx.cloud.database().collection('orders').doc(this.data.orderId).get(); const order = this.normalizeOrder(result.data); this.setData({ order, timeline: this.buildTimeline(result.data) }) }
-    catch (err) { wx.showToast({ title: '订单加载失败', icon: 'none' }) }
+    try {
+      const result = await wx.cloud.callFunction({ name: 'customerOrders', data: { action: 'get', id: this.data.orderId } })
+      if (!result.result || !result.result.success || !result.result.order) throw new Error('订单不存在')
+      const rawOrder = result.result.order
+      const order = this.normalizeOrder(rawOrder)
+      this.setData({ order, timeline: this.buildTimeline(rawOrder) })
+    }
+    catch (err) {
+      console.error('订单详情加载失败:', err)
+      wx.showToast({ title: err.message || '订单加载失败', icon: 'none' })
+    }
   },
   normalizeOrder(order) {
     const price = order.priceDetail || {}; const raw = order.address; const address = raw ? { name: raw.userName || raw.name, phone: raw.telNumber || raw.phone, detail: raw.detailInfo || raw.detail || '' } : null
@@ -31,7 +46,20 @@ Page({
   confirmReceive() { this.confirmAction('confirmReceive', this.data.order.deliveryType === 'pickup' ? '确认取货' : '确认收货', '请确认商品已经收到。', '订单已完成') },
   applyAfterSale() { this.confirmAction('applyAfterSale', '申请售后', '提交后商家会电话联系您处理。', '售后申请已提交') },
   confirmAction(action, title, content, successTitle) {
-    wx.showModal({ title, content, success: async res => { if (!res.confirm) return; try { wx.showLoading({ title: '处理中', mask: true }); const result = await wx.cloud.callFunction({ name: 'customerOrders', data: { action, id: this.data.orderId } }); if (!result.result || !result.result.success) throw new Error('操作失败'); wx.showToast({ title: successTitle, icon: 'success' }); this.loadOrderDetail() } catch (err) { wx.showToast({ title: err.message || '操作失败', icon: 'none' }) } finally { wx.hideLoading() } } })
+    wx.showModal({ title, content, success: async res => {
+      if (!res.confirm) return
+      wx.showLoading({ title: '处理中', mask: true })
+      try {
+        const result = await wx.cloud.callFunction({ name: 'customerOrders', data: { action, id: this.data.orderId } })
+        if (!result.result || !result.result.success) throw new Error('操作失败')
+        wx.hideLoading()
+        wx.showToast({ title: successTitle, icon: 'success' })
+        this.loadOrderDetail()
+      } catch (err) {
+        wx.hideLoading()
+        wx.showToast({ title: err.message || '操作失败', icon: 'none' })
+      }
+    } })
   },
   contactService() { wx.makePhoneCall({ phoneNumber: '15250878388' }) }
 })

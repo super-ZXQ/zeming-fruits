@@ -23,3 +23,10 @@ input,
 textarea {
   box-sizing: border-box;
 }
+
+.image-placeholder {
+  color: #9aa49e;
+  font-size: 18rpx;
+  line-height: 1.25;
+  text-align: center;
+}

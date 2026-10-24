@@ -142,6 +142,7 @@ Page({
       if (!result.result || !result.result.success) {
         if (result.result && result.result.code === 'QUOTE_CHANGED' && result.result.quote) {
           this.setData({ quote: result.result.quote, goods: result.result.quote.goods })
+          wx.hideLoading()
           wx.showModal({ title: '金额已更新', content: `最新预估金额为 ¥${result.result.quote.priceDetail.total}，请确认后重新提交。`, showCancel: false })
           return
         }
@@ -150,12 +151,13 @@ Page({
       app.globalData.cart = app.globalData.cart.filter(item => !item.selected)
       app.saveCartToStorage()
       app.updateCartBadge()
+      wx.hideLoading()
       wx.showToast({ title: '预约提交成功', icon: 'success' })
       setTimeout(() => wx.redirectTo({ url: `/pages/orderDetail/orderDetail?id=${result.result.data.orderId}` }), 700)
     } catch (err) {
+      wx.hideLoading()
       wx.showToast({ title: err.message || '预约提交失败', icon: 'none' })
     } finally {
-      wx.hideLoading()
       this.setData({ submitting: false })
     }
   }

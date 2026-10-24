@@ -133,9 +133,14 @@ Page({
         wx.cloud.uploadFile({
           cloudPath: `products/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${suffix}`,
           filePath: image.tempFilePath,
-          success: upload => this.setData({ 'editForm.imageUrl': upload.fileID }),
-          fail: () => wx.showToast({ title: '图片上传失败', icon: 'none' }),
-          complete: () => wx.hideLoading()
+          success: upload => {
+            wx.hideLoading()
+            this.setData({ 'editForm.imageUrl': upload.fileID })
+          },
+          fail: () => {
+            wx.hideLoading()
+            wx.showToast({ title: '图片上传失败', icon: 'none' })
+          }
         })
       }
     })
@@ -159,12 +164,12 @@ Page({
       wx.showLoading({ title: nextStatus === 'active' ? '上架中…' : '下架中…', mask: true })
       const result = await wx.cloud.callFunction({ name: 'adminProducts', data: { action: 'setStatus', id, status: nextStatus } })
       if (!result.result || !result.result.success) throw new Error('操作失败')
+      wx.hideLoading()
       wx.showToast({ title: nextStatus === 'active' ? '已上架' : '已下架', icon: 'success' })
       this.loadProducts()
     } catch (err) {
-      wx.showToast({ title: err.message || '操作失败', icon: 'none' })
-    } finally {
       wx.hideLoading()
+      wx.showToast({ title: err.message || '操作失败', icon: 'none' })
     }
   },
 
@@ -177,12 +182,12 @@ Page({
       const result = await wx.cloud.callFunction({ name: 'adminProducts', data: { action: 'save', product } })
       if (!result.result || !result.result.success) throw new Error('保存失败')
       this.closeModal()
+      wx.hideLoading()
       wx.showToast({ title: '保存成功', icon: 'success' })
       this.loadProducts()
     } catch (err) {
-      wx.showModal({ title: '保存失败', content: err.message || '请稍后重试', showCancel: false })
-    } finally {
       wx.hideLoading()
+      wx.showModal({ title: '保存失败', content: err.message || '请稍后重试', showCancel: false })
     }
   }
 })

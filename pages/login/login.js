@@ -32,12 +32,13 @@ Page({
         throw new Error(result.result && result.result.error || '登录失败')
       }
       app.setSession(result.result.user, result.result)
+      wx.hideLoading()
       wx.showToast({ title: '登录成功', icon: 'success' })
       setTimeout(() => wx.switchTab({ url: '/pages/index/index' }), 700)
     } catch (err) {
+      wx.hideLoading()
       wx.showModal({ title: '登录失败', content: err.message || '请稍后重试', showCancel: false })
     } finally {
-      wx.hideLoading()
       this.setData({ loading: false })
     }
   },

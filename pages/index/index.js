@@ -85,7 +85,7 @@ Page({
       imageUrl: item.imageUrl,
       description: item.description
     }, 1)
-    wx.showToast({ title: '已加入预约单', icon: 'success' })
+    wx.showToast({ title: '已加入购物车', icon: 'success' })
   },
 
   retryLoad() { this.loadProducts() },

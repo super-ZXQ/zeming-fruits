@@ -1,6 +1,6 @@
 <view class="container">
   <view class="header">
-    <view><text class="title">预约单</text><text class="header-tip">选好水果后提交预约</text></view>
+    <view><text class="title">购物车</text><text class="header-tip">选好水果后提交预订</text></view>
     <text class="count" wx:if="{{cart.length > 0}}">共{{cart.length}}件</text>
   </view>
 
@@ -13,7 +13,7 @@
         
         <view class="item-img">
           <image wx:if="{{item.imageUrl}}" class="product-image" src="{{item.imageUrl}}" mode="aspectFill" binderror="onImageError" data-index="{{index}}"></image>
-          <text wx:else class="fruit-icon">{{item.emoji || '🍎'}}</text>
+          <text wx:else class="image-placeholder">暂无图片</text>
         </view>
         
         <view class="item-info">
@@ -37,7 +37,7 @@
 
   <view class="empty" wx:else>
     <text class="empty-icon">🛒</text>
-    <text class="empty-text">预约单里还没有鲜果</text>
+    <text class="empty-text">购物车里还没有鲜果</text>
     <view class="go-btn" bindtap="goShopping">去挑选</view>
   </view>
 

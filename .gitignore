@@ -13,6 +13,7 @@ cloudfunctions/*/admin-config.json
 *.log
 preview-*.png
 preview-info.json
+preview-*-info.json
 devtools-login*.png
 devtools-login*.json
 
